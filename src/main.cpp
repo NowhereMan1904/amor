@@ -22,11 +22,13 @@
 #include <cstdio>
 
 #include <QtDBus>
+#include <QApplication>
 
-#include <kuniqueapplication.h>
-#include <klocale.h>
-#include <kcmdlineargs.h>
+//#include <kuniqueapplication.h>
+#include <KLocalizedString>
+
 #include <kaboutdata.h>
+#include <QCommandLineParser>
 
 
 static const char description[] = I18N_NOOP("KDE creature for your desktop");
@@ -37,7 +39,7 @@ int main(int argc, char *argv[])
     QApplication::setGraphicsSystem( QLatin1String( "native" ) );
 
     KAboutData about( "amor", 0, ki18n( "amor" ), AMOR_VERSION );
-    about.setLicense( KAboutData::License_GPL );
+    about.setLicense( KAboutLicense::GPL );
     about.setShortDescription( ki18n( description ) );
     about.setCopyrightStatement( ki18n( "1999 by Martin R. Jones\n2010 by Stefan Böhmann" ) );
 
@@ -61,7 +63,15 @@ int main(int argc, char *argv[])
         "gpuga@gioia.ing.unlp.edu.ar"
     );
 
-    KCmdLineArgs::init( argc, argv, &about );
+    QApplication app(argc, argv); // PORTING SCRIPT: move this to before the KAboutData initialization
+    QCommandLineParser parser;
+    KAboutData::setApplicationData(aboutData);
+    parser.addVersionOption();
+    parser.addHelpOption();
+    //PORTING SCRIPT: adapt aboutdata variable if necessary
+    aboutData.setupCommandLine(&parser);
+    parser.process(app); // PORTING SCRIPT: move this to after any parser.addOption
+    aboutData.processCommandLine(&parser);
 
     if( !KUniqueApplication::start() ) {
         std::fprintf( stderr, "%s is already running!\n", qPrintable( about.appName() ) );

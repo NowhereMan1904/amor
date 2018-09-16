@@ -13,10 +13,20 @@ set( amor_SRCS
   amortips.cpp
 )
 
-qt4_add_dbus_adaptor( amor_SRCS org.kde.amor.xml amor.h Amor )
+qt5_add_dbus_adaptor( amor_SRCS org.kde.amor.xml amor.h Amor )
 
-kde4_add_executable( amor ${amor_SRCS} )
-target_link_libraries( amor ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} )
+add_executable( amor ${amor_SRCS} )
+target_link_libraries( amor
+    Qt5::Core
+    Qt5::Widgets
+    Qt5::DBus
+    Qt5::X11Extras
+    KF5::ConfigCore
+    KF5::ConfigGui
+    KF5::Crash
+    KF5::I18n
+    KF5::TextWidgets
+)
 
 install( TARGETS amor  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 

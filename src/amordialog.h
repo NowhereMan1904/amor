@@ -18,7 +18,8 @@
 #ifndef AMORDIALOG_H
 #define AMORDIALOG_H
 
-#include <kdialog.h>
+//#include <kdialog.h>
+#include <QDialog>
 #include "amorconfig.h"
 
 class QListWidget;

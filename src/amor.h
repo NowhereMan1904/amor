@@ -21,7 +21,7 @@
 
 #include <ctime>
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QQueue>
 #include <QtCore/QList>
 

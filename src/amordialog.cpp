@@ -17,17 +17,18 @@
  */
 #include "amordialog.h"
 
-#include <QtGui/QCheckBox>
-#include <QtGui/QLabel>
-#include <QtGui/QListWidget>
-#include <QtGui/QSlider>
+#include <QCheckBox>
+#include <QLabel>
+#include <QListWidget>
+#include <QSlider>
 #include <KTextEdit>
-#include <QtGui/QPixmap>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
-#include <KConfig>
-#include <KIcon>
-#include <KLocale>
+#include <QPixmap>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+//#include <KConfig>
+#include <KLocalizedString>
+#include <QIcon>
+#include <KLocalizedString>
 #include <KStandardDirs>
 #include <KGlobal>
 #include <QGridLayout>
@@ -139,7 +140,7 @@ void AmorDialog::addTheme(const QString& file)
     pixmapPath += pixmapName;
     QPixmap pixmap( pixmapPath );
 
-    QListWidgetItem *item = new QListWidgetItem( KIcon( pixmap ), description, mThemeListView );
+    QListWidgetItem *item = new QListWidgetItem( QIcon( pixmap ), description, mThemeListView );
     mThemes.append( file );
     mThemeAbout.append( about );
 
