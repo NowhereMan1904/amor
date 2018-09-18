@@ -27,6 +27,10 @@ target_link_libraries( amor
     KF5::I18n
     KF5::TextWidgets
     KF5::CoreAddons
+    KF5::WidgetsAddons
+    KF5::WindowSystem
+    KF5::XmlGui
+    KF5::IconThemes
 )
 
 install( TARGETS amor  ${INSTALL_TARGETS_DEFAULT_ARGS} )

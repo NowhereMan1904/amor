@@ -19,7 +19,6 @@
 
 #include <KSharedConfig>
 #include <KConfigGroup>
-#include <KSharedConfig>
 
 
 AmorConfig::AmorConfig()

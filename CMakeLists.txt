@@ -22,6 +22,10 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED
     I18n
     TextWidgets
     CoreAddons
+    WidgetsAddons
+    WindowSystem
+    XmlGui
+    IconThemes
 )
 
 #include( KDE4Defaults )

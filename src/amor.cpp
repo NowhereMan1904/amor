@@ -35,21 +35,22 @@
 #include <QtCore/QTimer>
 #include <QtGui/QCursor>
 
-#include <kmenu.h>
-#include <kapplication.h>
-#include <kdebug.h>
-#include <klocale.h>
-#include <kmessagebox.h>
+#include <QMenu>
+#include <QDebug>
+#include <QLocale>
+#include <KWidgetsAddons/KMessageBox>
 #include <kstartupinfo.h>
 #include <kwindowsystem.h>
-#include <kstandarddirs.h>
-#include <khelpmenu.h>
-#include <kiconloader.h>
+#include <KHelpMenu>
+#include <KIconLoader>
 #include <krandom.h>
+#include <KLocalizedString>
+#include <KAboutData>
 
 #if defined Q_WS_X11
 #include <X11/Xlib.h>
 #include <QtGui/QX11Info>
+#include <QStandardPaths>
 #endif
 
 // #define DEBUG_AMOR
@@ -131,13 +132,13 @@ Amor::Amor()
     if( !QDBusConnection::sessionBus().connect( QString(), QString(), QLatin1String( "org.kde.amor" ),
             QLatin1String( "KDE_stop_screensaver" ), this, SLOT(screenSaverStopped()) ) )
     {
-        kDebug(10000) << "Could not attach DBus signal: KDE_stop_screensaver()";
+        qDebug() << "Could not attach DBus signal: KDE_stop_screensaver()";
     }
 
     if( !QDBusConnection::sessionBus().connect( QString(), QString(), QLatin1String( "org.kde.amor" ),
             QLatin1String( "KDE_start_screensaver" ), this, SLOT(screenSaverStarted()) ) )
     {
-        kDebug(10000) << "Could not attach DBus signal: KDE_start_screensaver()";
+        qDebug() << "Could not attach DBus signal: KDE_start_screensaver()";
     }
 
     KStartupInfo::appStarted();
@@ -239,9 +240,17 @@ bool Amor::readConfig()
     // Select a random theme if user requested it
     if( mConfig.mRandomTheme ) {
         QStringList files;
+        QStringList dirs;
 
         // Store relative paths into files to avoid storing absolute pathnames.
-        KGlobal::dirs()->findAllResources( "appdata", QLatin1String( "*rc" ), KStandardDirs::NoSearchOptions, files );
+        // LC: Why are relative paths so important?
+        dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String() );
+        for (auto d : dirs) {
+            const QStringList fileNames = QDir(d).entryList(QStringList() << QStringLiteral("*.rc"));
+            for (auto f : fileNames) {
+            files.append(f);
+            }
+        }
         int randomTheme = KRandom::random() % files.count();
         mConfig.mTheme = files.at( randomTheme );
     }
@@ -339,7 +348,7 @@ void Amor::selectAnimation(State state)
         }
 
         mTargetWin = mNextTarget;
-        if( mTargetWin != None ) {
+        if( mTargetWin != 0 ) { // LC: Assuming None == 0, which I'm far from being sure of
             mTargetRect = KWindowSystem::windowInfo( mTargetWin, NET::WMFrameExtents ).frameGeometry();
 
             // if the animation falls outside of the working area,
@@ -447,7 +456,7 @@ void Amor::selectAnimation(State state)
 
 void Amor::restack()
 {
-    if( mTargetWin == None ) {
+    if( mTargetWin == 0 ) {
         return;
     }
 
@@ -459,7 +468,7 @@ void Amor::restack()
 
 #if defined Q_WS_X11
     Window sibling = mTargetWin;
-    Window dw, parent = None, *wins;
+    Window dw, parent = 0, *wins;
 
     do {
         unsigned int nwins = 0;
@@ -472,10 +481,10 @@ void Amor::restack()
             }
         }
 
-        if( parent != None && parent != dw ) {
+        if( parent != 0 && parent != dw ) {
             sibling = parent;
         }
-    } while( parent != None && parent != dw );
+    } while( parent != 0 && parent != dw );
 
     // Set animation's stacking order to be above the window manager's
     // decoration of target window.
@@ -497,20 +506,20 @@ void Amor::slotMouseClicked(const QPoint &pos)
     }
 
     if( !mMenu ) {
-        KHelpMenu* help = new KHelpMenu( 0, KGlobal::mainComponent().aboutData(), false );
-        KMenu* helpMenu = help->menu();
+        KHelpMenu* help = new KHelpMenu( 0, KAboutData::applicationData(), false );
+        QMenu* helpMenu = help->menu();
 #ifdef __GNUC__
 #warning the following is kinda dirty and should be done by KHelpMenu::menu() I think. (hermier)
 #endif
         helpMenu->setIcon( SmallIcon( QLatin1String( "help-contents" ) ) );
         helpMenu->setTitle( i18nc( "@action:inmenu Amor", "&Help" ) );
 
-        mMenu = new KMenu( 0 );
-        mMenu->addTitle( QLatin1String( "Amor" ) ); // I really don't want this i18n'ed
+        mMenu = new QMenu( 0 );
+        mMenu->setTitle( QLatin1String( "Amor" ) ); // I really don't want this i18n'ed
         mMenu->addAction( SmallIcon( QLatin1String ("configure" ) ), i18nc( "@action:inmenu Amor", "&Configure..." ), this, SLOT(slotConfigure()) );
         mMenu->addSeparator();
         mMenu->addMenu( helpMenu );
-        mMenu->addAction( SmallIcon( QLatin1String( "application-exit" ) ), i18nc( "@action:inmenu Amor", "&Quit" ), kapp, SLOT(quit()) );
+        mMenu->addAction( SmallIcon( QLatin1String( "application-exit" ) ), i18nc( "@action:inmenu Amor", "&Quit" ), qApp, SLOT(quit()) );
     }
 
     mMenu->exec( pos );
@@ -726,7 +735,7 @@ void Amor::slotWindowChange(WId win, const unsigned long * properties)
     if( mappingState == NET::Iconic || mappingState == NET::Withdrawn ) {
         // The target window has been iconified
         selectAnimation( Destroy );
-        mTargetWin = None;
+        mTargetWin = 0;
         mTimer->stop();
         mTimer->setSingleShot( true );
         mTimer->start( 0 );
@@ -794,8 +803,8 @@ void Amor::slotDesktopChange(int desktop)
         return;
     }
 
-    mNextTarget = None;
-    mTargetWin = None;
+    mNextTarget = 0;
+    mTargetWin = 0;
     selectAnimation( Normal );
     mTimer->stop();
     mAmor->hide();
