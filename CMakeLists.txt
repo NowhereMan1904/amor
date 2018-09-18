@@ -21,6 +21,7 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED
     DocTools
     I18n
     TextWidgets
+    CoreAddons
 )
 
 #include( KDE4Defaults )

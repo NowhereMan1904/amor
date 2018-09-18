@@ -15,19 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/* LC: Temp
 #include "amor.h"
 #include "amorsessionwidget.h"
+*/
 #include "version.h"
 
 #include <cstdio>
 
 #include <QtDBus>
 #include <QApplication>
+#include <QString>
 
 //#include <kuniqueapplication.h>
 #include <KLocalizedString>
 
-#include <kaboutdata.h>
+#include <KAboutData>
 #include <QCommandLineParser>
 
 
@@ -36,53 +39,53 @@ static const char description[] = I18N_NOOP("KDE creature for your desktop");
 
 int main(int argc, char *argv[])
 {
-    QApplication::setGraphicsSystem( QLatin1String( "native" ) );
-
-    KAboutData about( "amor", 0, ki18n( "amor" ), AMOR_VERSION );
-    about.setLicense( KAboutLicense::GPL );
-    about.setShortDescription( ki18n( description ) );
-    about.setCopyrightStatement( ki18n( "1999 by Martin R. Jones\n2010 by Stefan Böhmann" ) );
-
-    about.addAuthor(
-        ki18n( "Stefan Böhmann" ),
-        ki18n( "Current maintainer" ),
-        "kde@hilefoks.org",
-        "http://www.hilefoks.org",
-        "hilefoks"
-    );
-
-    about.addAuthor(
-        ki18n("Martin R. Jones"),
-        KLocalizedString(),
-        "mjones@kde.org"
-    );
-
-    about.addAuthor(
-        ki18n( "Gerardo Puga" ),
-        KLocalizedString(),
-        "gpuga@gioia.ing.unlp.edu.ar"
-    );
-
+    //QApplication::setGraphicsSystem( QLatin1String( "native" ) );
     QApplication app(argc, argv); // PORTING SCRIPT: move this to before the KAboutData initialization
+
+    KAboutData about( QLatin1String("amor"), i18n( "amor" ), QLatin1String(AMOR_VERSION) );
+    about.setLicense( KAboutLicense::GPL );
+    about.setShortDescription( i18n( description ) );
+    about.setCopyrightStatement( i18n( "1999 by Martin R. Jones\n2010 by Stefan Böhmann" ) );
+
+    about.addAuthor(
+        i18n( "Stefan Böhmann" ),
+        i18n( "Current maintainer" ),
+        QLatin1String("kde@hilefoks.org"),
+        QLatin1String("http://www.hilefoks.org"),
+        QLatin1String("hilefoks")
+    );
+
+    about.addAuthor(
+        i18n("Martin R. Jones"),
+        QLatin1String(),
+        QLatin1String("mjones@kde.org")
+    );
+
+    about.addAuthor(
+        i18n( "Gerardo Puga" ),
+        QLatin1String(),
+        QLatin1String("gpuga@gioia.ing.unlp.edu.ar")
+    );
+
     QCommandLineParser parser;
-    KAboutData::setApplicationData(aboutData);
+    KAboutData::setApplicationData(about);
     parser.addVersionOption();
     parser.addHelpOption();
     //PORTING SCRIPT: adapt aboutdata variable if necessary
-    aboutData.setupCommandLine(&parser);
+    about.setupCommandLine(&parser);
     parser.process(app); // PORTING SCRIPT: move this to after any parser.addOption
-    aboutData.processCommandLine(&parser);
-
+    about.processCommandLine(&parser);
+/*
     if( !KUniqueApplication::start() ) {
         std::fprintf( stderr, "%s is already running!\n", qPrintable( about.appName() ) );
         exit( 0 );
     }
+*/
+//    KUniqueApplication app;
+//    AmorSessionWidget *sessionWidget = new AmorSessionWidget; // session management
+//    app.setTopWidget( sessionWidget );
 
-    KUniqueApplication app;
-    AmorSessionWidget *sessionWidget = new AmorSessionWidget; // session management
-    app.setTopWidget( sessionWidget );
-
-    QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ),new Amor() );
+//    QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ),new Amor() );
     return app.exec();
 }
 
