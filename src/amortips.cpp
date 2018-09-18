@@ -23,21 +23,23 @@
 #include <stdlib.h>
 
 #include <krandom.h>
-#include <kstandarddirs.h>
-#include <klocale.h>
-#include <kdebug.h>
 
-
+#include <QStandardPaths>
+#include <QLocale>
+#include <KLocalizedString>
+#include <QDebug>
 
 AmorTips::AmorTips()
 {
+    /* LC: https://community.kde.org/Frameworks/Porting_Notes#Translations
     KGlobal::locale()->insertCatalog( QLatin1String(  "ktip" ) ); // For ktip tip translations
+    */
 }
 
 
 bool AmorTips::setFile(const QString& file)
 {
-    QString path( KStandardDirs::locate( "appdata", file ) );
+    QString path( QStandardPaths::locate(QStandardPaths::AppDataLocation, file, QStandardPaths::LocateFile ) );
 
     bool rv = path.length() && read( path );
 
@@ -68,7 +70,7 @@ bool AmorTips::readKTips()
 {
     QString fname;
 
-    fname = KStandardDirs::locate("data", QLatin1String("kdewizard/tips"));
+    fname = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QLatin1String("kdewizard/tips"));
 
     if( fname.isEmpty() ) {
         return false;
@@ -95,7 +97,7 @@ bool AmorTips::readKTips()
             }
 
             if( tip.isEmpty() ) {
-                kDebug() << "Empty tip found! Skipping! " << pos;
+                qDebug() << "Empty tip found! Skipping! " << pos;
                 continue;
             }
 
