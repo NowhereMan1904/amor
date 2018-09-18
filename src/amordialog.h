@@ -26,7 +26,7 @@ class QListWidget;
 class KTextEdit;
 
 
-class AmorDialog : public KDialog
+class AmorDialog : public QDialog
 {
     Q_OBJECT
 
