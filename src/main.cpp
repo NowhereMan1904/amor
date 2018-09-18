@@ -15,10 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/* LC: Temp
+
 #include "amor.h"
 #include "amorsessionwidget.h"
-*/
 #include "version.h"
 
 #include <cstdio>
@@ -26,16 +25,12 @@
 #include <QtDBus>
 #include <QApplication>
 #include <QString>
-
-//#include <kuniqueapplication.h>
-#include <KLocalizedString>
-
-#include <KAboutData>
 #include <QCommandLineParser>
 
+#include <KLocalizedString>
+#include <KAboutData>
 
 static const char description[] = I18N_NOOP("KDE creature for your desktop");
-
 
 int main(int argc, char *argv[])
 {
@@ -75,17 +70,16 @@ int main(int argc, char *argv[])
     about.setupCommandLine(&parser);
     parser.process(app); // PORTING SCRIPT: move this to after any parser.addOption
     about.processCommandLine(&parser);
-/*
+/*  LC: probably safe to ignore
     if( !KUniqueApplication::start() ) {
         std::fprintf( stderr, "%s is already running!\n", qPrintable( about.appName() ) );
         exit( 0 );
     }
 */
 //    KUniqueApplication app;
-//    AmorSessionWidget *sessionWidget = new AmorSessionWidget; // session management
-//    app.setTopWidget( sessionWidget );
+    //AmorSessionWidget *sessionWidget = new AmorSessionWidget; // session management. LC: It seems does almost nothing, commenting out
 
-//    QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ),new Amor() );
+    QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ),new Amor() );
     return app.exec();
 }
 
