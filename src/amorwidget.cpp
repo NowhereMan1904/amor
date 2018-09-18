@@ -40,10 +40,12 @@ void AmorWidget::setPixmap(const QPixmap *pixmap)
     m_pixmap = pixmap;
 
     if( m_pixmap ) {
+        /* LC: I don't understand what it does and I see no easy way to port this code
         if( !m_pixmap->mask().isNull() ) {
             XShapeCombineMask( QX11Info::display(), winId(), ShapeBounding, 0, 0, m_pixmap->mask().handle(), ShapeSet );
             repaint();
         }
+        */
         update();
     }
 }
