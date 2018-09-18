@@ -35,7 +35,8 @@
 #include <QDialogButtonBox>
 
 #include <QPushButton>
-
+#include <QDir>
+#include <KConfigGroup>
 
 AmorDialog::AmorDialog(QWidget *parent)
   : QDialog( parent )
@@ -110,7 +111,7 @@ AmorDialog::AmorDialog(QWidget *parent)
                                           QDialogButtonBox::Apply |
                                           QDialogButtonBox::Cancel);
     buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
-    gridLayout->addWidget(buttonBox, 7,0);
+    gridLayout->addWidget(buttonBox, 7, 0, 1, 2);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &AmorDialog::slotOk);
     auto applyButton = buttonBox->button(QDialogButtonBox::Apply);
     connect(applyButton, &QPushButton::pressed, this, &AmorDialog::slotApply);
@@ -123,11 +124,19 @@ AmorDialog::AmorDialog(QWidget *parent)
 void AmorDialog::readThemes()   // LC: https://community.kde.org/Frameworks/Porting_Notes/KStandardDirs
 {
     QStringList files;
+    QStringList dirs;
 
     // Non-recursive search for theme files, with the relative paths stored
     // in files so that absolute paths are not used.
-    files = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String( "*rc" ));
+    dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String());
 
+    for (auto d : dirs) {
+        const QStringList fileNames = QDir(d).entryList(QStringList() << QStringLiteral("*.rc"));
+        for (auto f : fileNames) {
+            files.append(f);
+        }
+    }
+    
     for(QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it) {
         addTheme( *it );
     }
@@ -136,7 +145,7 @@ void AmorDialog::readThemes()   // LC: https://community.kde.org/Frameworks/Port
 
 void AmorDialog::addTheme(const QString& file)
 {
-    KConfig config( QStandardPaths::locate(QStandardPaths::DataLocation, file ) );
+    KConfig config( QStandardPaths::locate(QStandardPaths::AppDataLocation, file ) );
     KConfigGroup configGroup( &config, "Config" );
 
     QString pixmapPath = configGroup.readPathEntry( "PixmapPath", QString() );
