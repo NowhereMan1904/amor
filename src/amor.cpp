@@ -244,12 +244,10 @@ bool Amor::readConfig()
 
         // Store relative paths into files to avoid storing absolute pathnames.
         // LC: Why are relative paths so important?
-        dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String() );
+        dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String(), QStandardPaths::LocateDirectory );
         for (auto d : dirs) {
-            const QStringList fileNames = QDir(d).entryList(QStringList() << QStringLiteral("*.rc"));
-            for (auto f : fileNames) {
-            files.append(f);
-            }
+            const QStringList fileNames = QDir(d).entryList(QStringList() << QStringLiteral("*rc"));
+            files.append(fileNames);
         }
         int randomTheme = KRandom::random() % files.count();
         mConfig.mTheme = files.at( randomTheme );
