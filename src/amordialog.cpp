@@ -38,6 +38,8 @@
 #include <QDir>
 #include <KConfigGroup>
 
+#include <QDebug>
+
 AmorDialog::AmorDialog(QWidget *parent)
   : QDialog( parent )
 {
@@ -104,7 +106,7 @@ AmorDialog::AmorDialog(QWidget *parent)
     connect( this, SIGNAL(applyClicked()), SLOT(slotApply()) );
     connect( this, SIGNAL(cancelClicked()), SLOT(slotCancel()) );
     */
-    readThemes(); // LC: maybe goes to the end?
+    
     
     // LC: trying to replace KDialog::setButtons()
     auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
@@ -118,6 +120,8 @@ AmorDialog::AmorDialog(QWidget *parent)
     connect(buttonBox, &QDialogButtonBox::rejected, this, &AmorDialog::slotCancel);
     
     this->setLayout(gridLayout);
+    
+    readThemes(); // LC: maybe goes to the end?
 }
 
 
@@ -126,15 +130,10 @@ void AmorDialog::readThemes()   // LC: https://community.kde.org/Frameworks/Port
     QStringList files;
     QStringList dirs;
 
-    // Non-recursive search for theme files, with the relative paths stored
-    // in files so that absolute paths are not used.
-    dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String());
-
+    dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String(), QStandardPaths::LocateDirectory);
     for (auto d : dirs) {
-        const QStringList fileNames = QDir(d).entryList(QStringList() << QStringLiteral("*.rc"));
-        for (auto f : fileNames) {
-            files.append(f);
-        }
+        const QStringList fileNames = QDir(d).entryList(QStringList() << QStringLiteral("*rc"));
+        files.append(fileNames);
     }
     
     for(QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it) {
