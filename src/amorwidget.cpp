@@ -27,11 +27,11 @@
 
 
 AmorWidget::AmorWidget()
-  : QWidget( 0, Qt::WindowTitleHint | Qt::X11BypassWindowManagerHint ),
+  : QWidget( 0, Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ),
     m_pixmap( 0 ),
     m_dragging( false )
 {
-    setAttribute( Qt::WA_NoSystemBackground, true );
+    setAttribute(Qt::WA_TranslucentBackground);
 }
 
 
