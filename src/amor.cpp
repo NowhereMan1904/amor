@@ -347,7 +347,7 @@ void Amor::selectAnimation(State state)
 
         mTargetWin = mNextTarget;
         if( mTargetWin != 0 ) { // LC: Assuming None == 0, which I'm far from being sure of
-            mTargetRect = KWindowSystem::windowInfo( mTargetWin, NET::WMFrameExtents ).frameGeometry();
+            mTargetRect = KWindowInfo( mTargetWin, NET::WMFrameExtents ).frameGeometry();
 
             // if the animation falls outside of the working area,
             // then relocate it so that is inside the desktop again
@@ -506,9 +506,11 @@ void Amor::slotMouseClicked(const QPoint &pos)
     if( !mMenu ) {
         KHelpMenu* help = new KHelpMenu( 0, KAboutData::applicationData(), false );
         QMenu* helpMenu = help->menu();
+/* LC: seems to work fine, I'm ignoring the following warning
 #ifdef __GNUC__
 #warning the following is kinda dirty and should be done by KHelpMenu::menu() I think. (hermier)
 #endif
+*/
         helpMenu->setIcon( SmallIcon( QLatin1String( "help-contents" ) ) );
         helpMenu->setTitle( i18nc( "@action:inmenu Amor", "&Help" ) );
 
@@ -728,7 +730,7 @@ void Amor::slotWindowChange(WId win, const unsigned long * properties)
     // This is an active event that affects the target window
     std::time( &mActiveTime );
 
-    NET::MappingState mappingState = KWindowSystem::windowInfo( mTargetWin, NET::WMFrameExtents ).mappingState();
+    NET::MappingState mappingState = KWindowInfo( mTargetWin, NET::WMFrameExtents ).mappingState();
 
     if( mappingState == NET::Iconic || mappingState == NET::Withdrawn ) {
         // The target window has been iconified
@@ -742,7 +744,7 @@ void Amor::slotWindowChange(WId win, const unsigned long * properties)
     }
 
     if( properties[0] & NET::WMGeometry ) {
-        QRect newTargetRect = KWindowSystem::windowInfo( mTargetWin, NET::WMFrameExtents ).frameGeometry();
+        QRect newTargetRect = KWindowInfo( mTargetWin, NET::WMFrameExtents ).frameGeometry();
 
         // if the change in the window caused the animation to fall
         // out of the working area of the desktop, or if the animation

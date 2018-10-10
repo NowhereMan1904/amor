@@ -96,10 +96,13 @@ bool AmorThemeManager::readGroup(const QString & seq)
     AmorPixmapManager::manager()->setPixmapDir( mPath );
     AmorAnimationGroup *animList = new AmorAnimationGroup;
 
+/* LC: autodelete seems already fixed (I still can't understand why
+ * animList is a pointer instead of a plain QList though)
 #ifdef __GNUC__
 #warning "kde4: fix autodelete for animList";
 #endif
     //animList->setAutoDelete(true);
+*/
 
     // Read the list of available animations.
     KConfigGroup conf( mConfig, "Config" );
