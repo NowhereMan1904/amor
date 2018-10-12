@@ -31,6 +31,7 @@ target_link_libraries( amor
     KF5::WindowSystem
     KF5::XmlGui
     KF5::IconThemes
+    KF5::DBusAddons
 )
 
 install( TARGETS amor  ${INSTALL_TARGETS_DEFAULT_ARGS} )

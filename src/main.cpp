@@ -29,13 +29,18 @@
 
 #include <KLocalizedString>
 #include <KAboutData>
+#include <KDBusAddons/KDBusService>
 
 static const char description[] = I18N_NOOP("KDE creature for your desktop");
 
 int main(int argc, char *argv[])
 {
-    //QApplication::setGraphicsSystem( QLatin1String( "native" ) );
     QApplication app(argc, argv); // PORTING SCRIPT: move this to before the KAboutData initialization
+    app.setApplicationName(QStringLiteral("amor"));
+    app.setOrganizationDomain(QStringLiteral("kde.org"));
+
+    QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ),new Amor() );
+    KDBusService service(KDBusService::Unique);
 
     KLocalizedString::setApplicationDomain("amor");
 
@@ -74,18 +79,10 @@ int main(int argc, char *argv[])
     KAboutData::setApplicationData(about);
     parser.addVersionOption();
     parser.addHelpOption();
-    //PORTING SCRIPT: adapt aboutdata variable if necessary
     about.setupCommandLine(&parser);
     parser.process(app); // PORTING SCRIPT: move this to after any parser.addOption
     about.processCommandLine(&parser);
-/*  LC: probably safe to ignore
-    if( !KUniqueApplication::start() ) {
-        std::fprintf( stderr, "%s is already running!\n", qPrintable( about.appName() ) );
-        exit( 0 );
-    }
-*/
 
-    QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ),new Amor() );
     return app.exec();
 }
 
