@@ -61,6 +61,12 @@ int main(int argc, char *argv[])
         QLatin1String(),
         QLatin1String("gpuga@gioia.ing.unlp.edu.ar")
     );
+    
+    about.addAuthor(
+        i18n("Lorenzo Combatti"),
+        QStringLiteral(),
+        QStringLiteral()
+    );
 
     QCommandLineParser parser;
     KAboutData::setApplicationData(about);
