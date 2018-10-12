@@ -37,6 +37,8 @@ int main(int argc, char *argv[])
     //QApplication::setGraphicsSystem( QLatin1String( "native" ) );
     QApplication app(argc, argv); // PORTING SCRIPT: move this to before the KAboutData initialization
 
+    KLocalizedString::setApplicationDomain("amor");
+
     KAboutData about( QLatin1String("amor"), i18n( "amor" ), QLatin1String(AMOR_VERSION) );
     about.setLicense( KAboutLicense::GPL );
     about.setShortDescription( i18n( description ) );
@@ -61,7 +63,7 @@ int main(int argc, char *argv[])
         QLatin1String(),
         QLatin1String("gpuga@gioia.ing.unlp.edu.ar")
     );
-    
+
     about.addAuthor(
         i18n("Lorenzo Combatti"),
         QStringLiteral(),
@@ -82,8 +84,6 @@ int main(int argc, char *argv[])
         exit( 0 );
     }
 */
-//    KUniqueApplication app;
-    //AmorSessionWidget *sessionWidget = new AmorSessionWidget; // session management. LC: It seems does almost nothing, commenting out
 
     QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ),new Amor() );
     return app.exec();

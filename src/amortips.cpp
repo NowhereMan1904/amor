@@ -26,14 +26,12 @@
 
 #include <QStandardPaths>
 #include <QLocale>
+#define TRANSLATION_DOMAIN "ktip"   // LC: https://community.kde.org/Frameworks/Porting_Notes#Translations
 #include <KLocalizedString>
 #include <QDebug>
 
 AmorTips::AmorTips()
 {
-    /* LC: https://community.kde.org/Frameworks/Porting_Notes#Translations
-    KGlobal::locale()->insertCatalog( QLatin1String(  "ktip" ) ); // For ktip tip translations
-    */
 }
 
 
