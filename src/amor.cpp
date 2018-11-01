@@ -17,40 +17,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "amor.h"
-#include "amorpixmapmanager.h"
 #include "amorbubble.h"
-#include "amorwidget.h"
 #include "amordialog.h"
-#include "version.h"
-#include "queueitem.h"
+#include "amorpixmapmanager.h"
 #include "amorthememanager.h"
+#include "amorwidget.h"
+#include "queueitem.h"
+#include "version.h"
 
 #include "amoradaptor.h"
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-
-#include <QtDBus/QtDBus>
-#include <QtCore/QTimer>
-#include <QtGui/QCursor>
-
-#include <QMenu>
-#include <QDebug>
-#include <QLocale>
-#include <KWidgetsAddons/KMessageBox>
-#include <kstartupinfo.h>
-#include <kwindowsystem.h>
+#include <KAboutData>
 #include <KHelpMenu>
 #include <KIconLoader>
-#include <krandom.h>
 #include <KLocalizedString>
-#include <KAboutData>
+#include <KMessageBox>
+#include <KRandom>
+#include <KStartupInfo>
+#include <KWindowSystem>
+
+#include <QCursor>
+#include <QDebug>
+#include <QLocale>
+#include <QMenu>
+#include <QtDBus>
+#include <QTimer>
+
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 
 #if defined Q_WS_X11
-#include <X11/Xlib.h>
-#include <QtGui/QX11Info>
 #include <QStandardPaths>
+#include <QX11Info>
+#include <X11/Xlib.h>
 #endif
 
 // #define DEBUG_AMOR
@@ -80,7 +80,7 @@ Amor::Amor()
     mForceHideAmorWidget( false )
 {
     new AmorAdaptor( this );
-    QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ), this );
+    QDBusConnection::sessionBus().registerObject( QStringLiteral( "/Amor" ), this );
 
     if( !readConfig() ) {
         qApp->quit();
@@ -95,31 +95,38 @@ Amor::Amor()
     mState       = Normal;
 
     mWin = KWindowSystem::self();
-    connect( mWin, SIGNAL(activeWindowChanged(WId)), this, SLOT(slotWindowActivate(WId)) );
-    connect( mWin, SIGNAL(windowRemoved(WId)), this, SLOT(slotWindowRemove(WId)) );
-    connect( mWin, SIGNAL(stackingOrderChanged()), this, SLOT(slotStackingChanged()) );
-    connect( mWin, SIGNAL(windowChanged(WId,const ulong*)),
-            this, SLOT(slotWindowChange(WId,const ulong*)) );
-    connect( mWin, SIGNAL(currentDesktopChanged(int)), this, SLOT(slotDesktopChange(int)) );
+    connect(mWin, &KWindowSystem::activeWindowChanged,
+            this, &Amor::slotWindowActivate);
+    connect(mWin, &KWindowSystem::windowRemoved,
+            this, &Amor::slotWindowRemove);
+    connect(mWin, &KWindowSystem::stackingOrderChanged,
+            this, &Amor::slotStackingChanged);
+    connect(mWin,
+            QOverload<WId,const ulong*>::of(&KWindowSystem::windowChanged),
+            this, &Amor::slotWindowChange);
+    connect(mWin, &KWindowSystem::currentDesktopChanged,
+            this, &Amor::slotDesktopChange);
 
     mAmor = new AmorWidget;
-    connect( mAmor, SIGNAL(mouseClicked(QPoint)), SLOT(slotMouseClicked(QPoint)) );
-    connect( mAmor, SIGNAL(dragged(QPoint,bool)), SLOT(slotWidgetDragged(QPoint,bool)) );
+    connect(mAmor, &AmorWidget::mouseClicked,
+            this, &Amor::slotMouseClicked);
+    connect(mAmor, &AmorWidget::dragged,
+            this, &Amor::slotWidgetDragged);
     mAmor->resize(mTheme.maximumSize());
 
     mTimer = new QTimer( this );
-    connect( mTimer, SIGNAL(timeout()), SLOT(slotTimeout()) );
+    connect(mTimer, &QTimer::timeout, this, &Amor::slotTimeout);
 
     mStackTimer = new QTimer( this );
-    connect( mStackTimer, SIGNAL(timeout()), SLOT(restack()) );
+    connect( mStackTimer, &QTimer::timeout, this, &Amor::restack );
 
     mBubbleTimer = new QTimer( this );
-    connect( mBubbleTimer, SIGNAL(timeout()), SLOT(slotBubbleTimeout()) );
+    connect( mBubbleTimer, &QTimer::timeout, this, &Amor::slotBubbleTimeout );
 
     std::time( &mActiveTime );
     mCursPos = QCursor::pos();
     mCursorTimer = new QTimer( this );
-    connect( mCursorTimer, SIGNAL(timeout()), SLOT(slotCursorTimeout()) );
+    connect( mCursorTimer, &QTimer::timeout, this, &Amor::slotCursorTimeout );
     mCursorTimer->start( 500 );
 
     if( mWin->activeWindow() ) {
@@ -613,8 +620,8 @@ void Amor::slotConfigure()
 {
     if( !mAmorDialog ) {
         mAmorDialog = new AmorDialog();
-        connect( mAmorDialog, SIGNAL(changed()), SLOT(slotConfigChanged()) );
-        connect( mAmorDialog, SIGNAL(offsetChanged(int)), SLOT(slotOffsetChanged(int)) );
+        connect( mAmorDialog, &AmorDialog::changed, this, &Amor::slotConfigChanged );
+        connect( mAmorDialog, &AmorDialog::offsetChanged, this, &Amor::slotOffsetChanged);
     }
 
     mAmorDialog->show();
