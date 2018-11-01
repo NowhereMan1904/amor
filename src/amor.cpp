@@ -723,6 +723,15 @@ void Amor::slotStackingChanged()
 
 void Amor::slotWindowChange(WId win, const unsigned long * properties)
 {
+    auto info = KWindowInfo(win, NET::WMState);
+    if (info.valid()) {
+        if (info.state() & NET::FullScreen) {
+            screenSaverStarted();
+            return;
+        }
+        screenSaverStopped();
+    }
+
     if( win != mTargetWin ) {
         return;
     }
