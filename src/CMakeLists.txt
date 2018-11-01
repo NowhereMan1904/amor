@@ -1,16 +1,16 @@
 set( amor_SRCS
-  main.cpp
-  queueitem.cpp
-  amorsessionwidget.cpp
-  amordialog.cpp
-  amor.cpp
-  amorwidget.cpp
-  amoranimation.cpp
-  amorthememanager.cpp
-  amorpixmapmanager.cpp
-  amorbubble.cpp
-  amorconfig.cpp
-  amortips.cpp
+    main.cpp
+    queueitem.cpp
+    amorsessionwidget.cpp
+    amordialog.cpp
+    amor.cpp
+    amorwidget.cpp
+    amoranimation.cpp
+    amorthememanager.cpp
+    amorpixmapmanager.cpp
+    amorbubble.cpp
+    amorconfig.cpp
+    amortips.cpp
 )
 
 qt5_add_dbus_adaptor( amor_SRCS org.kde.amor.xml amor.h Amor )
@@ -34,8 +34,7 @@ target_link_libraries( amor
     KF5::DBusAddons
 )
 
-install( TARGETS amor  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install( TARGETS amor ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-install( PROGRAMS amor.desktop     DESTINATION ${XDG_APPS_INSTALL_DIR} )
+install( PROGRAMS amor.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
 install( FILES org.kde.amor.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
-

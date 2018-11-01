@@ -15,7 +15,7 @@ install( FILES
     bsdrc
     tuxrc
     taorc
-  DESTINATION ${DATA_INSTALL_DIR}/amor
+    DESTINATION ${DATA_INSTALL_DIR}/amor
 )
 
 # TODO $(LN_S) $(amordir)/tips-en $(DESTDIR)$(amordir)/tips

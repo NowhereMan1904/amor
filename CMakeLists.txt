@@ -5,10 +5,10 @@ set (KF5_MIN_VERSION "5.30.0")
 project( amor )
 
 find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH}
+    ${ECM_KDE_MODULE_DIR}
+)
 
-# Search KDE installation
-#find_package( KDE4 REQUIRED )
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED
     Core
     Widgets
@@ -29,8 +29,6 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED
     DBusAddons
 )
 
-#include( KDE4Defaults )
-#include( MacroLibrary )
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
@@ -44,9 +42,6 @@ add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 add_definitions(-DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT)
 add_definitions(-DQT_NO_URL_CAST_FROM_STRING)
 add_definitions(-DQT_USE_QSTRINGBUILDER)
-# The FindKDE4.cmake module sets _KDE4_PLATFORM_DEFINITIONS with
-# definitions like _GNU_SOURCE that are needed on each platform.
-# Put configure checks below this line.
 
 add_subdirectory( data )
 add_subdirectory( src )
