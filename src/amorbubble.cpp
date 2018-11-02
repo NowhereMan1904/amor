@@ -19,7 +19,8 @@
 
 
 AmorBubble::AmorBubble()
-  : QLabel( 0, Qt::WindowTitleHint | Qt::X11BypassWindowManagerHint ),
+  : QLabel( nullptr,
+            Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ),
     m_mouseWithin( false )
 {
     setFrameStyle(QFrame::Panel | QFrame::Raised);

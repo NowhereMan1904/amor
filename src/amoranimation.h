@@ -25,9 +25,9 @@
 #include <QStringList>
 #include <QVector>
 
-class QPixmap;
-class KConfigGroup;
 class KConfig;
+class KConfigGroup;
+class QPixmap;
 
 class AmorAnimation
 {

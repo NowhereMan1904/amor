@@ -21,8 +21,6 @@
 #include <QLabel>
 #include <QPoint>
 
-class QLabel;
-
 
 class AmorBubble : public QLabel
 {
@@ -37,15 +35,15 @@ class AmorBubble : public QLabel
         bool mouseWithin() { return m_mouseWithin; }
 
     protected:
-        void enterEvent(QEvent *event) { Q_UNUSED( event ); m_mouseWithin = true; }
-        void leaveEvent(QEvent *event) { Q_UNUSED( event ); m_mouseWithin = false; }        
-        void mouseReleaseEvent(QMouseEvent *event) { Q_UNUSED( event ); hide(); }
+        void enterEvent(QEvent *) { m_mouseWithin = true; }
+        void leaveEvent(QEvent *) { m_mouseWithin = false; }
+        void mouseReleaseEvent(QMouseEvent *) { hide(); }
 
-    protected:        
+    protected:
         QLabel *m_label;        // displays the message
         //QPoint m_position;
         bool m_mouseWithin;      // the mouse pointer is inside the bubble
-        
+
         //QRect mBound;           // bounds of the text
         //QBitmap mMask;          // shape mask
         //VertPos mArrowVert;     // vertical position of the arrow

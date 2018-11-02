@@ -27,8 +27,9 @@
 
 
 AmorWidget::AmorWidget()
-  : QWidget( 0, Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ),
-    m_pixmap( 0 ),
+  : QWidget( nullptr,
+             Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ),
+    m_pixmap( nullptr ),
     m_dragging( false )
 {
     setAttribute(Qt::WA_TranslucentBackground);
