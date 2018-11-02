@@ -75,7 +75,8 @@
 
 
 Amor::Amor()
-  : mAmor( nullptr ),
+  : QObject(nullptr),
+    mAmor( nullptr ),
     mBubble( nullptr ),
     mForceHideAmorWidget( false )
 {
@@ -254,9 +255,9 @@ bool Amor::readConfig()
         // Store relative paths into files to avoid storing absolute pathnames.
         // LC: Why are relative paths so important?
         dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation,
-                                         QStringLiteral(),
+                                         QString(),
                                          QStandardPaths::LocateDirectory);
-        for (const auto& d : dirs) {
+        for (const auto& d : qAsConst(dirs)) {
             const QStringList fileNames =
                 QDir(d).entryList(QStringList() << QStringLiteral("*rc"));
             files << fileNames;
@@ -297,7 +298,7 @@ bool Amor::readConfig()
     }
 
     // Get the base animation
-    mBaseAnim = mTheme.random(QLatin1String( ANIM_BASE ) );
+    mBaseAnim = mTheme.random(QStringLiteral( ANIM_BASE ) );
 
     return true;
 }
@@ -524,7 +525,7 @@ void Amor::restack()
 }
 
 
-void Amor::slotMouseClicked(const QPoint &pos)
+void Amor::slotMouseClicked(QPoint pos)
 {
     bool restartTimer = mTimer->isActive();
 
@@ -680,7 +681,7 @@ void Amor::slotOffsetChanged(int off)
 }
 
 
-void Amor::slotWidgetDragged(const QPoint &delta, bool release)
+void Amor::slotWidgetDragged(QPoint delta, bool release)
 {
     if( mCurrAnim->frame() ) {
         int newPosition = mPosition + delta.x();

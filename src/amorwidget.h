@@ -33,8 +33,8 @@ class AmorWidget : public QWidget
         void setPixmap(const QPixmap *pixmap);
 
     signals:
-        void mouseClicked(const QPoint &pos);
-        void dragged(const QPoint &delta, bool release);
+        void mouseClicked(QPoint pos);
+        void dragged(QPoint delta, bool release);
 
     protected:
         void paintEvent(QPaintEvent *) override;

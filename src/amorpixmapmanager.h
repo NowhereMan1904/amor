@@ -28,7 +28,7 @@ class AmorPixmapManager
 {
     public:
         AmorPixmapManager();
-        virtual ~AmorPixmapManager();
+        ~AmorPixmapManager();
 
         void setPixmapDir(const QString &dir);
 

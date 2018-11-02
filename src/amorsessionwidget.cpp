@@ -22,6 +22,7 @@
 
 
 AmorSessionWidget::AmorSessionWidget()
+    : QWidget(nullptr)
 {
     // the only function of this widget is to catch & forward the
     // saveYourself() signal from the session manager

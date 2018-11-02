@@ -32,7 +32,7 @@ class AmorThemeManager
 {
     public:
         AmorThemeManager();
-        virtual ~AmorThemeManager();
+        ~AmorThemeManager();
 
         bool setTheme(const QString &file);
         bool readGroup(const QString &seq);

@@ -106,7 +106,7 @@ void AmorAnimation::readConfig(const KConfigGroup &config)
     // Read the list of frames to display and load them into the pixmap manager.
     mSequence = config.readEntry( "Sequence", QStringList() );
     int frames = mSequence.count();
-    for (const auto image : mSequence) {
+    for (const auto& image : qAsConst(mSequence)) {
         const QPixmap *pixmap = AmorPixmapManager::manager()->load(image);
         if (pixmap) {
             mMaximumSize = mMaximumSize.expandedTo(pixmap->size());
@@ -146,7 +146,7 @@ void AmorAnimation::readConfig(const KConfigGroup &config)
     const QPoint &lastHotspot = mHotspot[ mHotspot.size()-1 ];
     if( mTotalMovement > 0 ) {
         const QPixmap *lastFrame = AmorPixmapManager::manager()->
-                                    pixmap( mSequence.last() );
+                                    pixmap( mSequence.constLast() );
         if( lastFrame ) {
             mTotalMovement += ( lastFrame->width() - lastHotspot.x() );
         }

@@ -67,13 +67,13 @@ class Amor : public QObject
         void slotDesktopChange(int);
 
     protected slots:
-        void slotMouseClicked(const QPoint &pos);
+        void slotMouseClicked(QPoint pos);
         void slotTimeout();
         void slotCursorTimeout();
         void slotConfigure();
         void slotConfigChanged();
         void slotOffsetChanged(int);
-        void slotWidgetDragged( const QPoint &delta, bool release );
+        void slotWidgetDragged( QPoint delta, bool release );
         void restack();
         void hideBubble(bool forceDequeue = false);
 

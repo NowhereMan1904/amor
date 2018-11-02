@@ -63,19 +63,19 @@ int main(int argc, char *argv[])
 
     about.addAuthor(
         i18n("Martin R. Jones"),
-        QStringLiteral(),
+        QString(),
         QStringLiteral("mjones@kde.org")
     );
 
     about.addAuthor(
         i18n( "Gerardo Puga" ),
-        QStringLiteral(),
+        QString(),
         QStringLiteral("gpuga@gioia.ing.unlp.edu.ar")
     );
 
     about.addAuthor(
         i18n("Lorenzo Combatti"),
-        QStringLiteral(),
+        QString(),
         QStringLiteral("combatti@gmail.com")
     );
 

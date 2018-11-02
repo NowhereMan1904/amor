@@ -78,7 +78,7 @@ bool AmorThemeManager::setTheme(const QString & file)
 
 AmorAnimation *AmorThemeManager::random(const QString & group)
 {
-    QString grp = mStatic ? QLatin1String( "Base" ) : group;
+    QString grp = mStatic ? QStringLiteral( "Base" ) : group;
 
     auto it = mAnimations.constFind( grp );
     AmorAnimationGroup *animGroup = it != mAnimations.constEnd() ? *it : 0;
