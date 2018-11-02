@@ -17,18 +17,18 @@
  */
 #include "amortips.h"
 
-#include <QtCore/QFile>
-#include <QtCore/QRegExp>
+#include <KLocalizedString>
+#include <KRandom>
+
+#include <QDebug>
+#include <QFile>
+#include <QLocale>
+#include <QRegExp>
+#include <QStandardPaths>
 
 #include <stdlib.h>
 
-#include <krandom.h>
-
-#include <QStandardPaths>
-#include <QLocale>
 #define TRANSLATION_DOMAIN "ktip"   // LC: https://community.kde.org/Frameworks/Porting_Notes#Translations
-#include <KLocalizedString>
-#include <QDebug>
 
 AmorTips::AmorTips()
 {
@@ -37,7 +37,8 @@ AmorTips::AmorTips()
 
 bool AmorTips::setFile(const QString& file)
 {
-    QString path( QStandardPaths::locate(QStandardPaths::AppDataLocation, file, QStandardPaths::LocateFile ) );
+    QString path( QStandardPaths::locate(QStandardPaths::AppDataLocation, file,
+                                         QStandardPaths::LocateFile ) );
 
     bool rv = path.length() && read( path );
 
@@ -68,7 +69,8 @@ bool AmorTips::readKTips()
 {
     QString fname;
 
-    fname = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QLatin1String("kdewizard/tips"));
+    fname = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                   QStringLiteral("kdewizard/tips"));
 
     if( fname.isEmpty() ) {
         return false;
@@ -78,13 +80,16 @@ bool AmorTips::readKTips()
     if( f.open( QIODevice::ReadOnly ) ) {
         // Reading of tips must be exactly as in KTipDatabase::loadTips for translation
         QString content =QLatin1String( f.readAll() );
-        const QRegExp rx( QLatin1String( "\\n+" ) );
+        const QRegExp rx( QStringLiteral( "\\n+" ) );
 
         int pos = -1;
-        while( ( pos = content.indexOf( QLatin1String( "<html>" ), pos + 1, Qt::CaseInsensitive ) ) != -1 ) {
+        while( ( pos = content.indexOf( QStringLiteral( "<html>" ), pos + 1,
+                                        Qt::CaseInsensitive ) ) != -1 ) {
             QString tip = content
-                            .mid( pos + 6, content.indexOf(QLatin1String( "</html>" ), pos, Qt::CaseInsensitive) - pos - 6 )
-                            .replace( rx, QLatin1String( "\n" ) );
+                            .mid( pos + 6, content.indexOf(
+                                QStringLiteral( "</html>" ), pos,
+                                Qt::CaseInsensitive) - pos - 6 )
+                            .replace( rx, QStringLiteral( "\n" ) );
 
             if( !tip.endsWith(QLatin1Char( '\n' )) ) {
                 tip += QLatin1Char( '\n' );
