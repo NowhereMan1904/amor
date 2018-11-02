@@ -18,12 +18,12 @@
 #include "amorwidget.h"
 
 #include <QBitmap>
-#include <QPainter>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QX11Info>
 
-#include <X11/Xlib.h>
 #include <X11/extensions/shape.h>
+#include <X11/Xlib.h>
 
 
 AmorWidget::AmorWidget()
@@ -41,12 +41,6 @@ void AmorWidget::setPixmap(const QPixmap *pixmap)
     m_pixmap = pixmap;
 
     if( m_pixmap ) {
-        /* LC: I don't understand what it does and I see no easy way to port this code
-        if( !m_pixmap->mask().isNull() ) {
-            XShapeCombineMask( QX11Info::display(), winId(), ShapeBounding, 0, 0, m_pixmap->mask().handle(), ShapeSet );
-            repaint();
-        }
-        */
         update();
     }
 }
@@ -70,7 +64,8 @@ void AmorWidget::mousePressEvent(QMouseEvent *me)
 void AmorWidget::mouseMoveEvent(QMouseEvent *me)
 {
     if( me->buttons() & Qt::LeftButton ) {
-        if( !m_dragging && ( m_clickPos-me->globalPos() ).manhattanLength() > 3 ) {
+        if( !m_dragging && (m_clickPos-me->globalPos()).
+                            manhattanLength() > 3) {
             m_dragging = true;
         }
         if( m_dragging ) {
