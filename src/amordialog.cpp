@@ -17,39 +17,33 @@
  */
 #include "amordialog.h"
 
+#include <KConfig>
+#include <KConfigGroup>
+#include <KLocalizedString>
+#include <KSharedConfig>
+#include <KTextEdit>
+
 #include <QCheckBox>
+#include <QDebug>
+#include <QDialogButtonBox>
+#include <QDir>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QIcon>
 #include <QLabel>
 #include <QListWidget>
-#include <QSlider>
-#include <KTextEdit>
 #include <QPixmap>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <KConfig>
-#include <KLocalizedString>
-#include <QIcon>
-
-#include <QGridLayout>
-#include <QStandardPaths>
-#include <KSharedConfig>
-#include <QDialogButtonBox>
-
 #include <QPushButton>
-#include <QDir>
-#include <KConfigGroup>
-
-#include <QDebug>
+#include <QSlider>
+#include <QStandardPaths>
+#include <QVBoxLayout>
 
 AmorDialog::AmorDialog(QWidget *parent)
   : QDialog( parent )
 {
     QWidget::setWindowTitle( i18n( "Options" ) );
-    //setButtons( Ok | Apply | Cancel );
-    //setDefaultButton( Ok );
 
     mConfig.read();
-    //QWidget *mainwidget = new QWidget( this );
-    //setMainWidget( mainwidget );
 
     QGridLayout *gridLayout = new QGridLayout( this );
     gridLayout->setMargin( 0 );
@@ -61,8 +55,10 @@ AmorDialog::AmorDialog(QWidget *parent)
     mThemeListView->setIconSize( QSize( 32, 32 ) );
     mThemeListView->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     mThemeListView->setAlternatingRowColors( true );
-    connect( mThemeListView, SIGNAL(currentRowChanged(int)), SLOT(slotHighlighted(int)) );
-    mThemeListView->setMinimumSize( fontMetrics().maxWidth()*20, fontMetrics().lineSpacing()*6 );
+    connect(mThemeListView, &QListWidget::currentRowChanged,
+            this, &AmorDialog::slotHighlighted);
+    mThemeListView->setMinimumSize( fontMetrics().maxWidth()*20,
+                                    fontMetrics().lineSpacing()*6 );
     gridLayout->addWidget( mThemeListView, 1, 0 );
 
     mAboutEdit = new KTextEdit( this );
@@ -78,37 +74,31 @@ AmorDialog::AmorDialog(QWidget *parent)
     slider->setRange( -40, 40 );
     slider->setPageStep( 5 );
     slider->setValue( mConfig.mOffset );
-    connect( slider, SIGNAL(valueChanged(int)), SLOT(slotOffset(int)) );
+    connect(slider, &QSlider::valueChanged, this, &AmorDialog::slotOffset);
     gridLayout->addWidget( slider, 1, 1, 2, 1 );
 
     // Always on top
     QCheckBox *checkBox = new QCheckBox( i18n( "Always on top" ), this );
-    connect( checkBox, SIGNAL(toggled(bool)), SLOT(slotOnTop(bool)) );
+    connect(checkBox, &QCheckBox::toggled, this, &AmorDialog::slotOnTop);
     checkBox->setChecked( mConfig.mOnTop );
     gridLayout->addWidget( checkBox, 3, 0, 1, 2 );
 
     checkBox = new QCheckBox( i18n( "Show random tips" ), this );
-    connect( checkBox, SIGNAL(toggled(bool)), SLOT(slotRandomTips(bool)) );
+    connect(checkBox, &QCheckBox::toggled, this, &AmorDialog::slotRandomTips);
     checkBox->setChecked( mConfig.mTips ); // always keep this one after the connect, or the QList would not be grayed when it should
     gridLayout->addWidget( checkBox, 4, 0, 1, 2 );
 
     checkBox = new QCheckBox( i18n( "Use a random character" ), this );
-    connect( checkBox, SIGNAL(toggled(bool)), SLOT(slotRandomTheme(bool)) );
+    connect(checkBox, &QCheckBox::toggled, this, &AmorDialog::slotRandomTheme);
     checkBox->setChecked( mConfig.mRandomTheme );
     gridLayout->addWidget( checkBox, 5, 0, 1, 2 );
 
     checkBox = new QCheckBox( i18n( "Allow application tips" ), this );
-    connect( checkBox, SIGNAL(toggled(bool)), SLOT(slotApplicationTips(bool)) );
+    connect(checkBox, &QCheckBox::toggled,
+            this, &AmorDialog::slotApplicationTips);
     checkBox->setChecked( mConfig.mAppTips );
     gridLayout->addWidget( checkBox, 6, 0, 1, 2 );
-    /*
-    connect( this, SIGNAL(okClicked()), SLOT(slotOk()) );
-    connect( this, SIGNAL(applyClicked()), SLOT(slotApply()) );
-    connect( this, SIGNAL(cancelClicked()), SLOT(slotCancel()) );
-    */
-    
-    
-    // LC: trying to replace KDialog::setButtons()
+
     auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
                                           QDialogButtonBox::Apply |
                                           QDialogButtonBox::Cancel);
@@ -117,11 +107,12 @@ AmorDialog::AmorDialog(QWidget *parent)
     connect(buttonBox, &QDialogButtonBox::accepted, this, &AmorDialog::slotOk);
     auto applyButton = buttonBox->button(QDialogButtonBox::Apply);
     connect(applyButton, &QPushButton::pressed, this, &AmorDialog::slotApply);
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &AmorDialog::slotCancel);
-    
+    connect(buttonBox, &QDialogButtonBox::rejected,
+            this, &AmorDialog::slotCancel);
+
     this->setLayout(gridLayout);
-    
-    readThemes(); // LC: maybe goes to the end?
+
+    readThemes();
 }
 
 
@@ -130,13 +121,16 @@ void AmorDialog::readThemes()   // LC: https://community.kde.org/Frameworks/Port
     QStringList files;
     QStringList dirs;
 
-    dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String(), QStandardPaths::LocateDirectory);
+    dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation,
+                                     QStringLiteral(),
+                                     QStandardPaths::LocateDirectory);
     for (auto d : dirs) {
-        const QStringList fileNames = QDir(d).entryList(QStringList() << QStringLiteral("*rc"));
-        files.append(fileNames);
+        const QStringList fileNames = QDir(d).entryList(QStringList() <<
+                                        QStringLiteral("*rc"));
+        files << fileNames;
     }
-    
-    for(QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it) {
+
+    for(auto it = files.constBegin(); it != files.constEnd(); ++it) {
         addTheme( *it );
     }
 }
@@ -144,7 +138,8 @@ void AmorDialog::readThemes()   // LC: https://community.kde.org/Frameworks/Port
 
 void AmorDialog::addTheme(const QString& file)
 {
-    KConfig config( QStandardPaths::locate(QStandardPaths::AppDataLocation, file ) );
+    KConfig config( QStandardPaths::locate(QStandardPaths::AppDataLocation,
+                                           file ) );
     KConfigGroup configGroup( &config, "Config" );
 
     QString pixmapPath = configGroup.readPathEntry( "PixmapPath", QString() );
@@ -155,7 +150,8 @@ void AmorDialog::addTheme(const QString& file)
     pixmapPath += QLatin1Char( '/' );
     if( pixmapPath[0] != QLatin1Char( '/' ) ) {
         // relative to config file. We add a / to indicate the dir
-        pixmapPath = QStandardPaths::locate(QStandardPaths::AppDataLocation, pixmapPath);
+        pixmapPath = QStandardPaths::locate(QStandardPaths::AppDataLocation,
+                                            pixmapPath);
     }
 
     QString description = configGroup.readEntry( "Description" );
@@ -165,7 +161,8 @@ void AmorDialog::addTheme(const QString& file)
     pixmapPath += pixmapName;
     QPixmap pixmap( pixmapPath );
 
-    QListWidgetItem *item = new QListWidgetItem( QIcon( pixmap ), description, mThemeListView );
+    QListWidgetItem *item = new QListWidgetItem( QIcon( pixmap ), description,
+                                                 mThemeListView );
     mThemes.append( file );
     mThemeAbout.append( about );
 

@@ -18,12 +18,12 @@
 #ifndef AMORDIALOG_H
 #define AMORDIALOG_H
 
-//#include <kdialog.h>
-#include <QDialog>
 #include "amorconfig.h"
 
-class QListWidget;
+#include <QDialog>
+
 class KTextEdit;
+class QListWidget;
 
 
 class AmorDialog : public QDialog
@@ -31,7 +31,7 @@ class AmorDialog : public QDialog
     Q_OBJECT
 
     public:
-        explicit AmorDialog(QWidget *parent = 0);
+        explicit AmorDialog(QWidget *parent = nullptr);
 
     signals:
         void changed();
