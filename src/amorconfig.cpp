@@ -22,7 +22,7 @@
 
 
 AmorConfig::AmorConfig()
-  : mTheme(QLatin1String( "blobrc" ) ),
+  : mTheme(QStringLiteral( "blobrc" ) ),
     mOnTop( false ),
     mOffset( 0 ),
     mTips( false ),
