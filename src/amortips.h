@@ -26,7 +26,7 @@ class QFile;
 class AmorTips
 {
     public:
-        AmorTips();
+        AmorTips() =default;
 
         bool setFile(const QString& file);
         void reset();
@@ -34,7 +34,7 @@ class AmorTips
 
     protected:
         bool readKTips();
-        bool read(const QString& file);
+        bool read(const QString& path);
         bool readTip(QFile &file);
 
     protected:

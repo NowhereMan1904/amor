@@ -20,7 +20,7 @@
 #include <QPixmap>
 
 
-AmorPixmapManager *AmorPixmapManager::mManager = 0;
+AmorPixmapManager *AmorPixmapManager::mManager = nullptr;
 
 
 AmorPixmapManager::AmorPixmapManager()
@@ -63,7 +63,7 @@ const QPixmap* AmorPixmapManager::load(const QString & img)
         }
         else {
             delete pixmap;
-            pixmap = 0;
+            pixmap = nullptr;
         }
     }
 

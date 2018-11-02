@@ -124,7 +124,7 @@ void AmorDialog::readThemes()   // LC: https://community.kde.org/Frameworks/Port
     dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation,
                                      QStringLiteral(),
                                      QStandardPaths::LocateDirectory);
-    for (auto d : dirs) {
+    for (const auto d : dirs) {
         const QStringList fileNames = QDir(d).entryList(QStringList() <<
                                         QStringLiteral("*rc"));
         files << fileNames;

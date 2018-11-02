@@ -37,10 +37,10 @@ class AmorWidget : public QWidget
         void dragged(const QPoint &delta, bool release);
 
     protected:
-        void paintEvent(QPaintEvent *event);
-        void mousePressEvent(QMouseEvent *event);
-        void mouseMoveEvent(QMouseEvent *event);
-        void mouseReleaseEvent(QMouseEvent *event);
+        void paintEvent(QPaintEvent *) override;
+        void mousePressEvent(QMouseEvent *me) override;
+        void mouseMoveEvent(QMouseEvent *me) override;
+        void mouseReleaseEvent(QMouseEvent *me) override;
 
     protected:
         const QPixmap *m_pixmap;

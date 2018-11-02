@@ -29,7 +29,7 @@
 
 
 AmorThemeManager::AmorThemeManager()
-  : mConfig( 0 ),
+  : mConfig( nullptr ),
     mMaximumSize(0, 0)
 {
 }
@@ -88,7 +88,7 @@ AmorAnimation *AmorThemeManager::random(const QString & group)
         return animGroup->at( idx );
     }
 
-    return 0;
+    return nullptr;
 }
 
 
@@ -131,6 +131,7 @@ bool AmorThemeManager::readGroup(const QString & seq)
 
     // Couldn't read any entries at all
     if( entries == 0 ) {
+        delete animList;
         return false;
     }
 

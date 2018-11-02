@@ -27,7 +27,7 @@
 #include <QPixmap>
 
 
-AmorAnimation::AmorAnimation(KConfigGroup &config)
+AmorAnimation::AmorAnimation(const KConfigGroup &config)
   : mCurrent( 0 ),
     mTotalMovement( 0 ),
     mMaximumSize(0, 0)
@@ -96,19 +96,20 @@ int AmorAnimation::movement() const
 const QPixmap *AmorAnimation::frame()
 {
     return validFrame() ?
-        AmorPixmapManager::manager()->pixmap( mSequence.at( mCurrent ) ) : 0;
+        AmorPixmapManager::manager()->pixmap( mSequence.at( mCurrent ) ) :
+        nullptr;
 }
 
 
-void AmorAnimation::readConfig(KConfigGroup &config)
+void AmorAnimation::readConfig(const KConfigGroup &config)
 {
     // Read the list of frames to display and load them into the pixmap manager.
     mSequence = config.readEntry( "Sequence", QStringList() );
     int frames = mSequence.count();
-    for(auto it = mSequence.begin(); it != mSequence.end(); ++it) {
-        const QPixmap *pixmap = AmorPixmapManager::manager()->load( *it );
-        if( pixmap ) {
-            mMaximumSize = mMaximumSize.expandedTo( pixmap->size() );
+    for (const auto image : mSequence) {
+        const QPixmap *pixmap = AmorPixmapManager::manager()->load(image);
+        if (pixmap) {
+            mMaximumSize = mMaximumSize.expandedTo(pixmap->size());
         }
     }
 

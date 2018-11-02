@@ -37,8 +37,8 @@ static const char description[] = I18N_NOOP("KDE creature for your desktop");
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName(QStringLiteral("amor"));
-    app.setOrganizationDomain(QStringLiteral("kde.org"));
+    QApplication::setApplicationName(QStringLiteral("amor"));
+    QApplication::setOrganizationDomain(QStringLiteral("kde.org"));
 
     QDBusConnection::sessionBus().registerObject( QStringLiteral( "/Amor" ),
                                                   new Amor() );
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     parser.process(app);
     about.processCommandLine(&parser);
 
-    return app.exec();
+    return QApplication::exec();
 }
 
 

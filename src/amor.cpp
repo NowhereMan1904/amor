@@ -43,8 +43,8 @@
 #include <QtDBus>
 #include <QTimer>
 
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 #include <unistd.h>
 
 #if defined Q_WS_X11
@@ -75,8 +75,8 @@
 
 
 Amor::Amor()
-  : mAmor( 0 ),
-    mBubble( 0 ),
+  : mAmor( nullptr ),
+    mBubble( nullptr ),
     mForceHideAmorWidget( false )
 {
     new AmorAdaptor( this );
@@ -88,8 +88,8 @@ Amor::Amor()
 
     mTargetWin   = 0;
     mNextTarget  = 0;
-    mAmorDialog  = 0;
-    mMenu        = 0;
+    mAmorDialog  = nullptr;
+    mMenu        = nullptr;
     mCurrAnim    = mBaseAnim;
     mPosition    = mCurrAnim->hotspot().x();
     mState       = Normal;
@@ -129,8 +129,8 @@ Amor::Amor()
     connect( mCursorTimer, &QTimer::timeout, this, &Amor::slotCursorTimeout );
     mCursorTimer->start( 500 );
 
-    if( mWin->activeWindow() ) {
-        mNextTarget = mWin->activeWindow();
+    if( KWindowSystem::activeWindow() ) {
+        mNextTarget = KWindowSystem::activeWindow();
         selectAnimation( Focus );
         mTimer->setSingleShot( true );
         mTimer->start( 0 );
@@ -218,7 +218,7 @@ void Amor::showMessage( const QString &message , int msec )
 void Amor::reset()
 {
     hideBubble();
-    mAmor->setPixmap( 0L ); // get rid of your old copy of the pixmap
+    mAmor->setPixmap( nullptr ); // get rid of your old copy of the pixmap
 
     AmorPixmapManager::manager()->reset();
     mTips.reset();
@@ -256,7 +256,7 @@ bool Amor::readConfig()
         dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation,
                                          QStringLiteral(),
                                          QStandardPaths::LocateDirectory);
-        for (auto d : dirs) {
+        for (const auto& d : dirs) {
             const QStringList fileNames =
                 QDir(d).entryList(QStringList() << QStringLiteral("*rc"));
             files << fileNames;
@@ -267,21 +267,22 @@ bool Amor::readConfig()
 
     // read selected theme
     if( !mTheme.setTheme( mConfig.mTheme ) ) {
-        KMessageBox::error(
-            0,i18nc("@info:status", "Error reading theme: ") + mConfig.mTheme);
+        KMessageBox::error(nullptr,
+                           i18nc("@info:status", "Error reading theme: ") +
+                           mConfig.mTheme);
         return false;
     }
 
     if( !mTheme.isStatic() ) {
         const char *groups[] = {ANIM_BASE, ANIM_NORMAL, ANIM_FOCUS, ANIM_BLUR,
-                                ANIM_DESTROY, ANIM_SLEEP, ANIM_WAKE, 0};
+                                ANIM_DESTROY, ANIM_SLEEP, ANIM_WAKE, nullptr};
 
         // Read all the standard animation groups
-        for(int i = 0; groups[i]; ++i) {
-            if( !mTheme.readGroup(QLatin1String( groups[i] ) ) ) {
+        for (auto s : groups) {
+            if( !mTheme.readGroup(QLatin1String( s ) ) ) {
                 KMessageBox::error(
-                    0, i18nc( "@info:status", "Error reading group: " ) +
-                    QLatin1String( groups[i] ) );
+                    nullptr, i18nc( "@info:status", "Error reading group: " ) +
+                    QLatin1String( s ) );
                 return false;
             }
         }
@@ -289,7 +290,7 @@ bool Amor::readConfig()
     else {
         if( !mTheme.readGroup(QStringLiteral( ANIM_BASE ) ) ) {
             KMessageBox::error( 
-                0, i18nc( "@info:status", "Error reading group: " ) +
+                nullptr, i18nc( "@info:status", "Error reading group: " ) +
                 QStringLiteral( ANIM_BASE ) );
             return false;
         }
@@ -341,7 +342,7 @@ void Amor::hideBubble(bool forceDequeue)
         }
 
         delete mBubble;
-        mBubble = 0;
+        mBubble = nullptr;
     }
 }
 
@@ -372,7 +373,7 @@ void Amor::selectAnimation(State state)
 
             // if the animation falls outside of the working area,
             // then relocate it so that is inside the desktop again
-            QRect desktopArea = mWin->workArea();
+            QRect desktopArea = KWindowSystem::workArea();
 
             if( mTargetRect.y() - mCurrAnim->hotspot().y() +
                     mConfig.mOffset < desktopArea.y() ) {
@@ -533,7 +534,8 @@ void Amor::slotMouseClicked(const QPoint &pos)
     }
 
     if( !mMenu ) {
-        KHelpMenu* help = new KHelpMenu( 0, KAboutData::applicationData(),
+        KHelpMenu* help = new KHelpMenu( nullptr,
+                                         KAboutData::applicationData(),
                                          false );
         QMenu* helpMenu = help->menu();
 /* LC: seems to work fine, I'm ignoring the following warning
@@ -544,7 +546,7 @@ void Amor::slotMouseClicked(const QPoint &pos)
         helpMenu->setIcon( SmallIcon( QStringLiteral( "help-contents" ) ) );
         helpMenu->setTitle( i18nc( "@action:inmenu Amor", "&Help" ) );
 
-        mMenu = new QMenu( 0 );
+        mMenu = new QMenu( nullptr );
         mMenu->setTitle( QStringLiteral( "Amor" ) ); // I really don't want this i18n'ed
         mMenu->addAction( SmallIcon( QStringLiteral ("configure" ) ),
                           i18nc( "@action:inmenu Amor", "&Configure..." ),
@@ -569,7 +571,7 @@ void Amor::slotCursorTimeout()
 {
     QPoint currPos = QCursor::pos();
     QPoint diff = currPos - mCursPos;
-    std::time_t now = std::time( 0 );
+    std::time_t now = std::time( nullptr );
 
     if( mForceHideAmorWidget ) {
         return; // we're hidden, do nothing
@@ -804,7 +806,7 @@ void Amor::slotWindowChange(WId win, NET::Properties properties,
         // didn't fall in the working area before but it does now, then
         //  refocus on the current window so that the animation is
         // relocated.
-        QRect desktopArea = mWin->workArea();
+        QRect desktopArea = KWindowSystem::workArea();
 
         bool fitsInWorkArea = !( newTargetRect.y() - mCurrAnim->hotspot().y() +
                                     mConfig.mOffset < desktopArea.y() );
@@ -857,7 +859,7 @@ void Amor::slotDesktopChange(int desktop)
 {
     // GP: signal currentDesktopChanged seems to be emitted even if you
     // change to the very same desktop you are in.
-    if( mWin->currentDesktop() == desktop ) {
+    if( KWindowSystem::currentDesktop() == desktop ) {
         return;
     }
 

@@ -24,7 +24,8 @@
 
 class AmorAnimation;
 class KConfig;
-typedef QList<AmorAnimation*> AmorAnimationGroup;
+
+using AmorAnimationGroup = QList<AmorAnimation*>;
 
 
 class AmorThemeManager

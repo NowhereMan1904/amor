@@ -30,11 +30,11 @@ QueueItem::QueueItem(ItemType type, const QString &text, int time)
     int nesting = 0;
 
     // discard html code from the length count
-    for(int i = 0; i < m_text.length(); ++i) {
-        if( m_text[i] == QLatin1Char( '<' ) ) {
+    for (auto c : m_text) {
+        if( c == QLatin1Char( '<' ) ) {
             nesting++;
         }
-        else if( m_text[i] == QLatin1Char( '>' ) ) {
+        else if( c == QLatin1Char( '>' ) ) {
             nesting--;
         }
         else if( !nesting ) {

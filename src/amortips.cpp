@@ -26,13 +26,9 @@
 #include <QRegExp>
 #include <QStandardPaths>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #define TRANSLATION_DOMAIN "ktip"   // LC: https://community.kde.org/Frameworks/Porting_Notes#Translations
-
-AmorTips::AmorTips()
-{
-}
 
 
 bool AmorTips::setFile(const QString& file)

@@ -49,7 +49,7 @@ class Amor : public QObject
 
     public:
         Amor();
-        ~Amor();
+        ~Amor() override;
 
         void showTip(const QString &tip);
         void showMessage(const QString &message, int msec = -1);
