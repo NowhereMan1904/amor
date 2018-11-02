@@ -19,13 +19,12 @@
 #include "amoranimation.h"
 #include "amorpixmapmanager.h"
 
-#include <KConfigBase>
-#include <KRandom>
 #include <KConfig>
+#include <KConfigBase>
 #include <KConfigGroup>
+#include <KRandom>
 
-#include <QtGui/QPixmap>
-
+#include <QPixmap>
 
 
 AmorAnimation::AmorAnimation(KConfigGroup &config)
@@ -75,25 +74,29 @@ QSize AmorAnimation::maximumSize() const
 
 int AmorAnimation::delay() const
 {
-    return validFrame() && mCurrent < mDelay.size() ? mDelay.at( mCurrent ) : 100;
+    return validFrame() && mCurrent < mDelay.size() ?
+        mDelay.at( mCurrent ) : 100;
 }
 
 
 QPoint AmorAnimation::hotspot() const
 {
-    return validFrame() && mCurrent < mHotspot.size() ? mHotspot.at( mCurrent ) : QPoint( 16, 16 );
+    return validFrame() && mCurrent < mHotspot.size() ?
+        mHotspot.at( mCurrent ) : QPoint( 16, 16 );
 }
 
 
 int AmorAnimation::movement() const
 {
-    return validFrame() && mCurrent < mMovement.size() ? mMovement.at( mCurrent ) : 0;
+    return validFrame() && mCurrent < mMovement.size() ?
+        mMovement.at( mCurrent ) : 0;
 }
 
 
 const QPixmap *AmorAnimation::frame()
 {
-    return validFrame() ? AmorPixmapManager::manager()->pixmap( mSequence.at( mCurrent ) ) : 0;
+    return validFrame() ?
+        AmorPixmapManager::manager()->pixmap( mSequence.at( mCurrent ) ) : 0;
 }
 
 
@@ -102,7 +105,7 @@ void AmorAnimation::readConfig(KConfigGroup &config)
     // Read the list of frames to display and load them into the pixmap manager.
     mSequence = config.readEntry( "Sequence", QStringList() );
     int frames = mSequence.count();
-    for(QStringList::Iterator it = mSequence.begin(); it != mSequence.end(); ++it) {
+    for(auto it = mSequence.begin(); it != mSequence.end(); ++it) {
         const QPixmap *pixmap = AmorPixmapManager::manager()->load( *it );
         if( pixmap ) {
             mMaximumSize = mMaximumSize.expandedTo( pixmap->size() );
@@ -141,7 +144,8 @@ void AmorAnimation::readConfig(KConfigGroup &config)
     // Add the overlap of the last frame to the total movement.
     const QPoint &lastHotspot = mHotspot[ mHotspot.size()-1 ];
     if( mTotalMovement > 0 ) {
-        const QPixmap *lastFrame =  AmorPixmapManager::manager()->pixmap( mSequence.last() );
+        const QPixmap *lastFrame = AmorPixmapManager::manager()->
+                                    pixmap( mSequence.last() );
         if( lastFrame ) {
             mTotalMovement += ( lastFrame->width() - lastHotspot.x() );
         }
