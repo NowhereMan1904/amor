@@ -101,8 +101,8 @@ Amor::Amor()
             this, &Amor::slotWindowRemove);
     connect(mWin, &KWindowSystem::stackingOrderChanged,
             this, &Amor::slotStackingChanged);
-    connect(mWin,
-            QOverload<WId,const ulong*>::of(&KWindowSystem::windowChanged),
+    connect(mWin, QOverload<WId, NET::Properties, NET::Properties2>::
+                    of(&KWindowSystem::windowChanged),
             this, &Amor::slotWindowChange);
     connect(mWin, &KWindowSystem::currentDesktopChanged,
             this, &Amor::slotDesktopChange);
@@ -762,7 +762,8 @@ void Amor::slotStackingChanged()
 }
 
 
-void Amor::slotWindowChange(WId win, const unsigned long * properties)
+void Amor::slotWindowChange(WId win, NET::Properties properties,
+                            NET::Properties2)
 {
     auto info = KWindowInfo(win, NET::WMState);
     if (info.valid()) {
@@ -794,7 +795,7 @@ void Amor::slotWindowChange(WId win, const unsigned long * properties)
         return;
     }
 
-    if( properties[0] & NET::WMGeometry ) {
+    if( properties & NET::WMGeometry ) {
         QRect newTargetRect = KWindowInfo(
                             mTargetWin, NET::WMFrameExtents ).frameGeometry();
 

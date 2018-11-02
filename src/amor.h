@@ -28,6 +28,8 @@
 #include <QQueue>
 #include <QWidget>
 
+#include <netwm_def.h>
+
 #include <ctime>
 
 class AmorBubble;
@@ -60,7 +62,8 @@ class Amor : public QObject
         void slotWindowActivate(WId);
         void slotWindowRemove(WId);
         void slotStackingChanged();
-        void slotWindowChange(WId, const unsigned long * properties);
+        void slotWindowChange(WId, NET::Properties properties,
+                              NET::Properties2 properties2);
         void slotDesktopChange(int);
 
     protected slots:
