@@ -130,8 +130,8 @@ void AmorDialog::readThemes()   // LC: https://community.kde.org/Frameworks/Port
         files << fileNames;
     }
 
-    for(auto it = files.constBegin(); it != files.constEnd(); ++it) {
-        addTheme( *it );
+    for (const auto& f : qAsConst(files)) {
+        addTheme( f );
     }
 }
 

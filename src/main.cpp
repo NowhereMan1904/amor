@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     KAboutData about( QStringLiteral("amor"), i18n( "amor" ),
                       QStringLiteral(AMOR_VERSION) );
-    about.setLicense( KAboutLicense::GPL );
+    about.setLicense( KAboutLicense::GPL_V3 );
     about.setShortDescription( i18n( description ) );
     about.setCopyrightStatement( i18n(
         "1999 by Martin R. Jones\n2010 by Stefan Böhmann" ) );
