@@ -20,59 +20,63 @@
 #include "amorsessionwidget.h"
 #include "version.h"
 
+#include <KAboutData>
+#include <KDBusService>
+#include <KLocalizedString>
+
+#include <QApplication>
+#include <QCommandLineParser>
+#include <QString>
+#include <QtDBus>
+
 #include <cstdio>
 
-#include <QtDBus>
-#include <QApplication>
-#include <QString>
-#include <QCommandLineParser>
-
-#include <KLocalizedString>
-#include <KAboutData>
-#include <KDBusAddons/KDBusService>
 
 static const char description[] = I18N_NOOP("KDE creature for your desktop");
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv); // PORTING SCRIPT: move this to before the KAboutData initialization
+    QApplication app(argc, argv);
     app.setApplicationName(QStringLiteral("amor"));
     app.setOrganizationDomain(QStringLiteral("kde.org"));
 
-    QDBusConnection::sessionBus().registerObject( QLatin1String( "/Amor" ),new Amor() );
+    QDBusConnection::sessionBus().registerObject( QStringLiteral( "/Amor" ),
+                                                  new Amor() );
     KDBusService service(KDBusService::Unique);
 
     KLocalizedString::setApplicationDomain("amor");
 
-    KAboutData about( QLatin1String("amor"), i18n( "amor" ), QLatin1String(AMOR_VERSION) );
+    KAboutData about( QStringLiteral("amor"), i18n( "amor" ),
+                      QStringLiteral(AMOR_VERSION) );
     about.setLicense( KAboutLicense::GPL );
     about.setShortDescription( i18n( description ) );
-    about.setCopyrightStatement( i18n( "1999 by Martin R. Jones\n2010 by Stefan Böhmann" ) );
+    about.setCopyrightStatement( i18n(
+        "1999 by Martin R. Jones\n2010 by Stefan Böhmann" ) );
 
     about.addAuthor(
         i18n( "Stefan Böhmann" ),
         i18n( "Current maintainer" ),
-        QLatin1String("kde@hilefoks.org"),
-        QLatin1String("http://www.hilefoks.org"),
-        QLatin1String("hilefoks")
+        QStringLiteral("kde@hilefoks.org"),
+        QStringLiteral("http://www.hilefoks.org"),
+        QStringLiteral("hilefoks")
     );
 
     about.addAuthor(
         i18n("Martin R. Jones"),
-        QLatin1String(),
-        QLatin1String("mjones@kde.org")
+        QStringLiteral(),
+        QStringLiteral("mjones@kde.org")
     );
 
     about.addAuthor(
         i18n( "Gerardo Puga" ),
-        QLatin1String(),
-        QLatin1String("gpuga@gioia.ing.unlp.edu.ar")
+        QStringLiteral(),
+        QStringLiteral("gpuga@gioia.ing.unlp.edu.ar")
     );
 
     about.addAuthor(
         i18n("Lorenzo Combatti"),
         QStringLiteral(),
-        QStringLiteral()
+        QStringLiteral("combatti@gmail.com")
     );
 
     QCommandLineParser parser;
@@ -80,7 +84,7 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
     parser.addHelpOption();
     about.setupCommandLine(&parser);
-    parser.process(app); // PORTING SCRIPT: move this to after any parser.addOption
+    parser.process(app);
     about.processCommandLine(&parser);
 
     return app.exec();
