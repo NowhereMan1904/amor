@@ -80,7 +80,7 @@ Amor::Amor()
     mForceHideAmorWidget( false )
 {
     new AmorAdaptor( this );
-    QDBusConnection::sessionBus().registerObject( QStringLiteral( "/Amor" ), this );
+    QDBusConnection::sessionBus().registerObject(QStringLiteral("/Amor"),this);
 
     if( !readConfig() ) {
         qApp->quit();
@@ -136,15 +136,17 @@ Amor::Amor()
         mTimer->start( 0 );
     }
 
-    if( !QDBusConnection::sessionBus().connect( QString(), QString(), QLatin1String( "org.kde.amor" ),
-            QLatin1String( "KDE_stop_screensaver" ), this, SLOT(screenSaverStopped()) ) )
-    {
+    if( !QDBusConnection::sessionBus().connect(
+            QString(), QString(), QStringLiteral( "org.kde.amor" ),
+            QStringLiteral("KDE_stop_screensaver"),
+            this, SLOT(screenSaverStopped()))) {
         qDebug() << "Could not attach DBus signal: KDE_stop_screensaver()";
     }
 
-    if( !QDBusConnection::sessionBus().connect( QString(), QString(), QLatin1String( "org.kde.amor" ),
-            QLatin1String( "KDE_start_screensaver" ), this, SLOT(screenSaverStarted()) ) )
-    {
+    if( !QDBusConnection::sessionBus().connect(
+            QString(), QString(), QStringLiteral( "org.kde.amor" ),
+            QStringLiteral( "KDE_start_screensaver" ), this,
+            SLOT(screenSaverStarted()) ) ) {
         qDebug() << "Could not attach DBus signal: KDE_start_screensaver()";
     }
 
@@ -241,7 +243,7 @@ bool Amor::readConfig()
     mConfig.read();
 
     if( mConfig.mTips ) {
-        mTips.setFile(QLatin1String( TIPS_FILE ) );
+        mTips.setFile(QStringLiteral( TIPS_FILE ) );
     }
 
     // Select a random theme if user requested it
@@ -251,10 +253,13 @@ bool Amor::readConfig()
 
         // Store relative paths into files to avoid storing absolute pathnames.
         // LC: Why are relative paths so important?
-        dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, QLatin1String(), QStandardPaths::LocateDirectory );
+        dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation,
+                                         QStringLiteral(),
+                                         QStandardPaths::LocateDirectory);
         for (auto d : dirs) {
-            const QStringList fileNames = QDir(d).entryList(QStringList() << QStringLiteral("*rc"));
-            files.append(fileNames);
+            const QStringList fileNames =
+                QDir(d).entryList(QStringList() << QStringLiteral("*rc"));
+            files << fileNames;
         }
         int randomTheme = KRandom::random() % files.count();
         mConfig.mTheme = files.at( randomTheme );
@@ -262,24 +267,30 @@ bool Amor::readConfig()
 
     // read selected theme
     if( !mTheme.setTheme( mConfig.mTheme ) ) {
-        KMessageBox::error( 0, i18nc( "@info:status", "Error reading theme: " ) + mConfig.mTheme );
+        KMessageBox::error(
+            0,i18nc("@info:status", "Error reading theme: ") + mConfig.mTheme);
         return false;
     }
 
     if( !mTheme.isStatic() ) {
-        const char *groups[] = { ANIM_BASE, ANIM_NORMAL, ANIM_FOCUS, ANIM_BLUR, ANIM_DESTROY, ANIM_SLEEP, ANIM_WAKE, 0 };
+        const char *groups[] = {ANIM_BASE, ANIM_NORMAL, ANIM_FOCUS, ANIM_BLUR,
+                                ANIM_DESTROY, ANIM_SLEEP, ANIM_WAKE, 0};
 
         // Read all the standard animation groups
         for(int i = 0; groups[i]; ++i) {
             if( !mTheme.readGroup(QLatin1String( groups[i] ) ) ) {
-                KMessageBox::error( 0, i18nc( "@info:status", "Error reading group: " ) + QLatin1String( groups[i] ) );
+                KMessageBox::error(
+                    0, i18nc( "@info:status", "Error reading group: " ) +
+                    QLatin1String( groups[i] ) );
                 return false;
             }
         }
     }
     else {
-        if( !mTheme.readGroup(QLatin1String( ANIM_BASE ) ) ) {
-            KMessageBox::error( 0, i18nc( "@info:status", "Error reading group: " ) + QLatin1String( ANIM_BASE ) );
+        if( !mTheme.readGroup(QStringLiteral( ANIM_BASE ) ) ) {
+            KMessageBox::error( 
+                0, i18nc( "@info:status", "Error reading group: " ) +
+                QStringLiteral( ANIM_BASE ) );
             return false;
         }
     }
@@ -298,7 +309,8 @@ void Amor::showBubble()
             mBubble = new AmorBubble;
         }
 
-        mBubble->setOrigin( mAmor->x()+mAmor->width()/2, mAmor->y()+mAmor->height()/2 );
+        mBubble->setOrigin( mAmor->x()+mAmor->width()/2,
+                            mAmor->y()+mAmor->height()/2 );
         mBubble->setMessage( mTipsQueue.head()->text() );
 
         // mBubbleTimer->start(mTipsQueue.head()->time(), true);
@@ -322,7 +334,8 @@ void Amor::hideBubble(bool forceDequeue)
         // latter is to keep backwards compatibility and because
         // carrying around a tip bubble when switching windows quickly is really
         // annoyying
-        if( forceDequeue || !mBubble->isVisible() || ( mTipsQueue.head()->type() == QueueItem::Tip ) ) {
+        if( forceDequeue || !mBubble->isVisible() ||
+                ( mTipsQueue.head()->type() == QueueItem::Tip ) ) {
             /* there's always an item in the queue here */
             mTipsQueue.dequeue();
         }
@@ -341,32 +354,36 @@ void Amor::selectAnimation(State state)
     switch( state ) {
     case Blur:
         hideBubble();
-        mCurrAnim = mTheme.random(QLatin1String( ANIM_BLUR ) );
+        mCurrAnim = mTheme.random(QStringLiteral( ANIM_BLUR ) );
         mState = Focus;
         break;
 
     case Focus:
         hideBubble();
-        mCurrAnim = mTheme.random(QLatin1String( ANIM_FOCUS ) );
+        mCurrAnim = mTheme.random(QStringLiteral( ANIM_FOCUS ) );
         if( oldAnim != mCurrAnim ) {
             mCurrAnim->reset();
         }
 
         mTargetWin = mNextTarget;
         if( mTargetWin != 0 ) { // LC: Assuming None == 0, which I'm far from being sure of
-            mTargetRect = KWindowInfo( mTargetWin, NET::WMFrameExtents ).frameGeometry();
+            mTargetRect = KWindowInfo(
+                mTargetWin, NET::WMFrameExtents).frameGeometry();
 
             // if the animation falls outside of the working area,
             // then relocate it so that is inside the desktop again
             QRect desktopArea = mWin->workArea();
 
-            if( mTargetRect.y() - mCurrAnim->hotspot().y() + mConfig.mOffset < desktopArea.y() ) {
+            if( mTargetRect.y() - mCurrAnim->hotspot().y() +
+                    mConfig.mOffset < desktopArea.y() ) {
                 if( mInDesktopBottom ) {
                     changedLocation = false;
                 }
 
                 // relocate the animation at the bottom of the screen
-                mTargetRect = QRect( desktopArea.x(), desktopArea.y() + desktopArea.height(), desktopArea.width(), 0 );
+                mTargetRect = QRect( desktopArea.x(),
+                                     desktopArea.y() + desktopArea.height(),
+                                     desktopArea.width(), 0 );
 
                 // we'll relocate the animation in the desktop
                 // frame, so do not add the offset to its vertical position
@@ -397,7 +414,9 @@ void Amor::selectAnimation(State state)
                         mPosition = mCurrAnim->hotspot().x();
                     }
                     else if(changedLocation) {
-                        mPosition = KRandom::random() % ( mTargetRect.width() - mCurrAnim->frame()->width() );
+                        mPosition = KRandom::random() %
+                            (mTargetRect.width() -
+                            mCurrAnim->frame()->width());
                         mPosition += mCurrAnim->hotspot().x();
                     }
                 }
@@ -417,16 +436,16 @@ void Amor::selectAnimation(State state)
 
     case Destroy:
         hideBubble();
-        mCurrAnim = mTheme.random(QLatin1String( ANIM_DESTROY ) );
+        mCurrAnim = mTheme.random(QStringLiteral( ANIM_DESTROY ) );
         mState = Focus;
         break;
 
     case Sleeping:
-        mCurrAnim = mTheme.random(QLatin1String( ANIM_SLEEP ) );
+        mCurrAnim = mTheme.random(QStringLiteral( ANIM_SLEEP ) );
         break;
 
     case Waking:
-        mCurrAnim = mTheme.random(QLatin1String( ANIM_WAKE ) );
+        mCurrAnim = mTheme.random(QStringLiteral( ANIM_WAKE ) );
         mState = Normal;
         break;
 
@@ -435,7 +454,7 @@ void Amor::selectAnimation(State state)
         // is not the base, otherwise select the base.  This makes us
         // alternate between the base animation and a random animination.
         if( !mBubble && mCurrAnim == mBaseAnim ) {
-            mCurrAnim = mTheme.random(QLatin1String( ANIM_NORMAL ) );
+            mCurrAnim = mTheme.random(QStringLiteral( ANIM_NORMAL ) );
         }
         else {
             mCurrAnim = mBaseAnim;
@@ -443,7 +462,8 @@ void Amor::selectAnimation(State state)
         break;
     }
 
-    if( mCurrAnim->totalMovement() + mPosition > mTargetRect.width() || mCurrAnim->totalMovement() + mPosition < 0 ) {
+    if( mCurrAnim->totalMovement() + mPosition > mTargetRect.width() ||
+            mCurrAnim->totalMovement() + mPosition < 0 ) {
         // The selected animation would end outside of this window's width
         // We could randomly select a different one, but I prefer to just
         // use the default animation.
@@ -480,7 +500,8 @@ void Amor::restack()
 
         // We must use the target window's parent as our sibling.
         // Is there a faster way to get parent window than XQueryTree?
-        if( XQueryTree( QX11Info::display(), sibling, &dw, &parent, &wins, &nwins ) ) {
+        if( XQueryTree( QX11Info::display(), sibling, &dw,
+                        &parent, &wins, &nwins ) ) {
             if( nwins ) {
                 XFree(wins);
             }
@@ -496,7 +517,8 @@ void Amor::restack()
     XWindowChanges values;
     values.sibling = sibling;
     values.stack_mode = Above;
-    XConfigureWindow( QX11Info::display(), mAmor->winId(), CWSibling | CWStackMode, &values);
+    XConfigureWindow( QX11Info::display(), mAmor->winId(),
+                      CWSibling | CWStackMode, &values);
 #endif
 }
 
@@ -511,22 +533,27 @@ void Amor::slotMouseClicked(const QPoint &pos)
     }
 
     if( !mMenu ) {
-        KHelpMenu* help = new KHelpMenu( 0, KAboutData::applicationData(), false );
+        KHelpMenu* help = new KHelpMenu( 0, KAboutData::applicationData(),
+                                         false );
         QMenu* helpMenu = help->menu();
 /* LC: seems to work fine, I'm ignoring the following warning
 #ifdef __GNUC__
 #warning the following is kinda dirty and should be done by KHelpMenu::menu() I think. (hermier)
 #endif
 */
-        helpMenu->setIcon( SmallIcon( QLatin1String( "help-contents" ) ) );
+        helpMenu->setIcon( SmallIcon( QStringLiteral( "help-contents" ) ) );
         helpMenu->setTitle( i18nc( "@action:inmenu Amor", "&Help" ) );
 
         mMenu = new QMenu( 0 );
-        mMenu->setTitle( QLatin1String( "Amor" ) ); // I really don't want this i18n'ed
-        mMenu->addAction( SmallIcon( QLatin1String ("configure" ) ), i18nc( "@action:inmenu Amor", "&Configure..." ), this, SLOT(slotConfigure()) );
+        mMenu->setTitle( QStringLiteral( "Amor" ) ); // I really don't want this i18n'ed
+        mMenu->addAction( SmallIcon( QStringLiteral ("configure" ) ),
+                          i18nc( "@action:inmenu Amor", "&Configure..." ),
+                          this, &Amor::slotConfigure );
         mMenu->addSeparator();
         mMenu->addMenu( helpMenu );
-        mMenu->addAction( SmallIcon( QLatin1String( "application-exit" ) ), i18nc( "@action:inmenu Amor", "&Quit" ), qApp, SLOT(quit()) );
+        mMenu->addAction( SmallIcon( QStringLiteral( "application-exit" ) ),
+                          i18nc( "@action:inmenu Amor", "&Quit" ),
+                          qApp, &QCoreApplication::quit );
     }
 
     mMenu->exec( pos );
@@ -577,7 +604,8 @@ void Amor::slotTimeout()
 
     mAmor->setPixmap( mCurrAnim->frame() );
     mAmor->move( mTargetRect.x() + mPosition - mCurrAnim->hotspot().x(),
-                 mTargetRect.y() - mCurrAnim->hotspot().y() + ( !mInDesktopBottom?mConfig.mOffset:0 ) );
+                 mTargetRect.y() - mCurrAnim->hotspot().y() +
+                 ( !mInDesktopBottom?mConfig.mOffset:0 ) );
 
     if( !mAmor->isVisible() ) {
         mAmor->show();
@@ -590,7 +618,8 @@ void Amor::slotTimeout()
         if( !mTipsQueue.isEmpty() && !mBubble &&  mConfig.mAppTips ) {
             showBubble();
         }
-        else if( KRandom::random()%TIP_FREQUENCY == 1 && mConfig.mTips && !mBubble && !mCurrAnim->frameNum() ) {
+        else if( KRandom::random()%TIP_FREQUENCY == 1 && mConfig.mTips &&
+                !mBubble && !mCurrAnim->frameNum() ) {
             mTipsQueue.enqueue( new QueueItem( QueueItem::Tip, mTips.tip() ) );
             showBubble();
         }
@@ -598,7 +627,8 @@ void Amor::slotTimeout()
 
     if( mTheme.isStatic() ) {
         mTimer->setSingleShot( true );
-        mTimer->start( ( mState == Normal ) || ( mState == Sleeping ) ? 1000 : 100 );
+        mTimer->start( ( mState == Normal ) || ( mState == Sleeping ) ?
+                        1000 : 100 );
     }
     else {
         mTimer->setSingleShot( true );
@@ -620,8 +650,10 @@ void Amor::slotConfigure()
 {
     if( !mAmorDialog ) {
         mAmorDialog = new AmorDialog();
-        connect( mAmorDialog, &AmorDialog::changed, this, &Amor::slotConfigChanged );
-        connect( mAmorDialog, &AmorDialog::offsetChanged, this, &Amor::slotOffsetChanged);
+        connect( mAmorDialog, &AmorDialog::changed,
+                 this, &Amor::slotConfigChanged );
+        connect( mAmorDialog, &AmorDialog::offsetChanged,
+                 this, &Amor::slotOffsetChanged);
     }
 
     mAmorDialog->show();
@@ -640,7 +672,8 @@ void Amor::slotOffsetChanged(int off)
 
     if( mCurrAnim->frame() ) {
         mAmor->move( mPosition + mTargetRect.x() - mCurrAnim->hotspot().x(),
-                     mTargetRect.y() - mCurrAnim->hotspot().y() + ( !mInDesktopBottom ? mConfig.mOffset : 0 ) );
+                     mTargetRect.y() - mCurrAnim->hotspot().y() +
+                     ( !mInDesktopBottom ? mConfig.mOffset : 0 ) );
     }
 }
 
@@ -656,7 +689,8 @@ void Amor::slotWidgetDragged(const QPoint &delta, bool release)
             newPosition = -mCurrAnim->totalMovement();
         }
         mPosition = newPosition;
-        mAmor->move( mTargetRect.x() + mPosition - mCurrAnim->hotspot().x(), mAmor->y() );
+        mAmor->move( mTargetRect.x() + mPosition - mCurrAnim->hotspot().x(),
+                     mAmor->y() );
 
         if( mTheme.isStatic() && release ) {
             // static animations save the new position as preferred.
@@ -746,7 +780,8 @@ void Amor::slotWindowChange(WId win, const unsigned long * properties)
     // This is an active event that affects the target window
     std::time( &mActiveTime );
 
-    NET::MappingState mappingState = KWindowInfo( mTargetWin, NET::WMFrameExtents ).mappingState();
+    NET::MappingState mappingState = KWindowInfo(
+                            mTargetWin, NET::WMFrameExtents ).mappingState();
 
     if( mappingState == NET::Iconic || mappingState == NET::Withdrawn ) {
         // The target window has been iconified
@@ -760,7 +795,8 @@ void Amor::slotWindowChange(WId win, const unsigned long * properties)
     }
 
     if( properties[0] & NET::WMGeometry ) {
-        QRect newTargetRect = KWindowInfo( mTargetWin, NET::WMFrameExtents ).frameGeometry();
+        QRect newTargetRect = KWindowInfo(
+                            mTargetWin, NET::WMFrameExtents ).frameGeometry();
 
         // if the change in the window caused the animation to fall
         // out of the working area of the desktop, or if the animation
@@ -769,8 +805,10 @@ void Amor::slotWindowChange(WId win, const unsigned long * properties)
         // relocated.
         QRect desktopArea = mWin->workArea();
 
-        bool fitsInWorkArea = !( newTargetRect.y() - mCurrAnim->hotspot().y() + mConfig.mOffset < desktopArea.y() );
-        if( ( !fitsInWorkArea && !mInDesktopBottom ) || ( fitsInWorkArea && mInDesktopBottom ) ) {
+        bool fitsInWorkArea = !( newTargetRect.y() - mCurrAnim->hotspot().y() +
+                                    mConfig.mOffset < desktopArea.y() );
+        if( ( !fitsInWorkArea && !mInDesktopBottom ) ||
+                ( fitsInWorkArea && mInDesktopBottom ) ) {
             mNextTarget = mTargetWin;
             selectAnimation( Blur );
             mTimer->setSingleShot( true );
@@ -801,11 +839,14 @@ void Amor::slotWindowChange(WId win, const unsigned long * properties)
                     mPosition = 0;
                 }
             }
-            else if( mPosition > mTargetRect.width() - ( mCurrAnim->frame()->width() - mCurrAnim->hotspot().x() ) ) {
-                mPosition = mTargetRect.width() - ( mCurrAnim->frame()->width() - mCurrAnim->hotspot().x() );
+            else if( mPosition > mTargetRect.width() -
+                    (mCurrAnim->frame()->width() - mCurrAnim->hotspot().x())) {
+                mPosition = mTargetRect.width() -
+                    ( mCurrAnim->frame()->width() - mCurrAnim->hotspot().x() );
             }
-            mAmor->move( mTargetRect.x() + mPosition - mCurrAnim->hotspot().x(),
-                         mTargetRect.y() - mCurrAnim->hotspot().y() + ( !mInDesktopBottom ? mConfig.mOffset : 0 ) );
+            mAmor->move(mTargetRect.x() + mPosition - mCurrAnim->hotspot().x(),
+                        mTargetRect.y() - mCurrAnim->hotspot().y() +
+                        ( !mInDesktopBottom ? mConfig.mOffset : 0 ) );
         }
     }
 }
