@@ -19,25 +19,25 @@
 #ifndef AMOR_H
 #define AMOR_H
 
-#include <ctime>
-
-#include <QWidget>
-#include <QtCore/QQueue>
-#include <QtCore/QList>
-
 #include "amoranimation.h"
-#include "amortips.h"
 #include "amorconfig.h"
 #include "amorthememanager.h"
+#include "amortips.h"
 
-class AmorDialog;
+#include <QList>
+#include <QQueue>
+#include <QWidget>
+
+#include <ctime>
+
 class AmorBubble;
+class AmorDialog;
 class AmorWidget;
 
-class QTimer;
+class KConfigBase;
 class KWindowSystem;
 class QMenu;
-class KConfigBase;
+class QTimer;
 class QueueItem;
 
 
