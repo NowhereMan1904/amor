@@ -25,7 +25,8 @@ AmorSessionWidget::AmorSessionWidget()
 {
     // the only function of this widget is to catch & forward the
     // saveYourself() signal from the session manager
-    connect( qApp, SIGNAL(saveStateRequest()), SLOT(wm_saveyourself()) );
+    connect(qApp, &QApplication::saveStateRequest,
+            this, &AmorSessionWidget::wm_saveyourself);
 }
 
 
