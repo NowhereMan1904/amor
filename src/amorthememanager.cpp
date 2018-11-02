@@ -17,13 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "amorthememanager.h"
+
 #include "amoranimation.h"
 #include "amorpixmapmanager.h"
-
 
 #include <KConfig>
 #include <KConfigGroup>
 #include <KRandom>
+
 #include <QStandardPaths>
 
 
@@ -79,7 +80,7 @@ AmorAnimation *AmorThemeManager::random(const QString & group)
 {
     QString grp = mStatic ? QLatin1String( "Base" ) : group;
 
-    QHash<QString, AmorAnimationGroup*>::const_iterator it = mAnimations.constFind( grp );
+    auto it = mAnimations.constFind( grp );
     AmorAnimationGroup *animGroup = it != mAnimations.constEnd() ? *it : 0;
 
     if( animGroup ) {

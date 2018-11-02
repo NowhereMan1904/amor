@@ -22,8 +22,8 @@
 #include <QHash>
 #include <QSize>
 
-class KConfig;
 class AmorAnimation;
+class KConfig;
 typedef QList<AmorAnimation*> AmorAnimationGroup;
 
 
